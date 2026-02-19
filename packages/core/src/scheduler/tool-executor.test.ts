@@ -233,7 +233,10 @@ describe('ToolExecutor', () => {
       const response = result.response.responseParts[0]?.functionResponse
         ?.response as Record<string, unknown>;
       // The content should be the *truncated* version returned by the mock formatTruncatedToolOutput
-      expect(response).toEqual({ output: 'TruncatedContent...' });
+      expect(response).toEqual({
+        output: 'TruncatedContent...',
+        outputFile: '/tmp/truncated_output.txt',
+      });
       expect(result.response.outputFile).toBe('/tmp/truncated_output.txt');
     }
   });

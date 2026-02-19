@@ -581,6 +581,7 @@ export interface ToolResult {
   data?: Record<string, unknown>;
 
   /**
+  /**
    * Optional request to execute another tool immediately after this one.
    * The result of this tail call will replace the original tool's response.
    */
@@ -588,6 +589,13 @@ export interface ToolResult {
     name: string;
     args: Record<string, unknown>;
   };
+
+  /**
+   * Optional path to a file containing the full, non-truncated output of the tool.
+   * If provided, the scheduler may use this file for long-term storage and
+   * reference it in the conversation history if the output is truncated.
+   */
+  fullOutputFilePath?: string;
 }
 
 /**
