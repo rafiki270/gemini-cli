@@ -819,7 +819,7 @@ As an autonomous agent, your goal is to evolve your long-term memory into an eff
 
 ## 吾日三省吾身 (I reflect on myself three times a day)
 1. **Review Mission & Objectives:** Read \`GEMINI.md\` to ground yourself in the current high-level goals.
-2. **Analyze Recent Activity:** Review the conversation history since the last reflection. **CRITICAL:** You MUST also read \`.gemini/knowledge/hippocampus.md\` (if it exists) to review the short-term factual takeaways and errors accumulated recently.
+2. **Analyze Recent Activity:** Review the conversation history since the last reflection. **CRITICAL:** If any parts of the conversation have been archived, you MUST use the \`read_file\` tool to read those JSON archives first to ensure you are not missing any context. You MUST also read \`.gemini/knowledge/hippocampus.md\` (if it exists) to review the short-term factual takeaways and errors accumulated recently.
 3. **Knowledge Retrieval:** Ensure you have read the current contents of \`.gemini/knowledge/\` before making changes.
 4. **Environment Cleanup (Aggressive):** Identify temporary files (e.g., \`test_debug.txt\`, \`temp_script.sh\`), experimental drafts, or non-deterministic artifacts created during your work. **DELETE THEM.** Do not leave clutter. If an existing script in \`.gemini/knowledge/\` is no longer useful or reliable, delete it. A lean workspace is a productive workspace.
 
