@@ -26,7 +26,6 @@ import {
   DISCOVERED_TOOL_PREFIX,
   TOOL_LEGACY_ALIASES,
   getToolAliases,
-  PLAN_MODE_TOOLS,
   WRITE_FILE_TOOL_NAME,
   EDIT_TOOL_NAME,
 } from './tool-names.js';
@@ -445,11 +444,23 @@ export class ToolRegistry {
    * @returns All the tools that are not excluded.
    */
   private getActiveTools(): AnyDeclarativeTool[] {
+    const allTools = Array.from(this.allKnownTools.values());
     const excludedTools =
-      this.expandExcludeToolsWithAliases(this.config.getExcludeTools()) ??
-      new Set([]);
+      this.expandExcludeToolsWithAliases(
+        this.config.getExcludeTools(
+          allTools.map((t) => ({
+            name:
+              t instanceof DiscoveredMCPTool
+                ? t.getFullyQualifiedName()
+                : t.name,
+            annotations: t.annotations,
+            mcpName: t instanceof DiscoveredMCPTool ? t.serverName : undefined,
+          })),
+        ),
+      ) ?? new Set([]);
+
     const activeTools: AnyDeclarativeTool[] = [];
-    for (const tool of this.allKnownTools.values()) {
+    for (const tool of allTools) {
       if (this.isActiveTool(tool, excludedTools)) {
         activeTools.push(tool);
       }
@@ -487,45 +498,22 @@ export class ToolRegistry {
     excludeTools?: Set<string>,
   ): boolean {
     excludeTools ??=
-      this.expandExcludeToolsWithAliases(this.config.getExcludeTools()) ??
-      new Set([]);
-
-    // Filter tools in Plan Mode to only allow approved read-only tools.
-    const isPlanMode =
-      typeof this.config.getApprovalMode === 'function' &&
-      this.config.getApprovalMode() === ApprovalMode.PLAN;
-    if (isPlanMode) {
-      const allowedToolNames = new Set<string>(PLAN_MODE_TOOLS);
-      // We allow write_file and replace for writing plans specifically.
-      allowedToolNames.add(WRITE_FILE_TOOL_NAME);
-      allowedToolNames.add(EDIT_TOOL_NAME);
-
-      // Discovered MCP tools are allowed if they are read-only.
-      if (
-        tool instanceof DiscoveredMCPTool &&
-        tool.isReadOnly &&
-        !allowedToolNames.has(tool.name)
-      ) {
-        allowedToolNames.add(tool.name);
-      }
-
-      if (!allowedToolNames.has(tool.name)) {
-        return false;
-      }
-    }
+      this.expandExcludeToolsWithAliases(
+        this.config.getExcludeTools(
+          Array.from(this.allKnownTools.values()).map((t) => ({
+            name: t.name,
+            annotations: t.annotations,
+            mcpName: t instanceof DiscoveredMCPTool ? t.serverName : undefined,
+          })),
+        ),
+      ) ?? new Set([]);
 
     const normalizedClassName = tool.constructor.name.replace(/^_+/, '');
     const possibleNames = [tool.name, normalizedClassName];
     if (tool instanceof DiscoveredMCPTool) {
-      // Check both the unqualified and qualified name for MCP tools.
-      if (tool.name.startsWith(tool.getFullyQualifiedPrefix())) {
-        possibleNames.push(
-          tool.name.substring(tool.getFullyQualifiedPrefix().length),
-        );
-      } else {
-        possibleNames.push(`${tool.getFullyQualifiedPrefix()}${tool.name}`);
-      }
+      possibleNames.push(tool.getFullyQualifiedName());
     }
+
     return !possibleNames.some((name) => excludeTools.has(name));
   }
 
@@ -541,7 +529,8 @@ export class ToolRegistry {
     const plansDir = this.config.storage.getPlansDir();
 
     const declarations: FunctionDeclaration[] = [];
-    this.getActiveTools().forEach((tool) => {
+    const activeTools = this.getActiveTools();
+    activeTools.forEach((tool) => {
       let schema = tool.getSchema(modelId);
       if (
         isPlanMode &&
@@ -582,14 +571,16 @@ export class ToolRegistry {
    * excluded via configuration.
    */
   getAllToolNames(): string[] {
-    return this.getActiveTools().map((tool) => tool.name);
+    const activeTools = this.getActiveTools();
+    return activeTools.map((tool) => tool.name);
   }
 
   /**
    * Returns an array of all registered and discovered tool instances.
    */
   getAllTools(): AnyDeclarativeTool[] {
-    return this.getActiveTools().sort((a, b) =>
+    const activeTools = this.getActiveTools();
+    return activeTools.sort((a, b) =>
       a.displayName.localeCompare(b.displayName),
     );
   }
@@ -599,7 +590,8 @@ export class ToolRegistry {
    */
   getToolsByServer(serverName: string): AnyDeclarativeTool[] {
     const serverTools: AnyDeclarativeTool[] = [];
-    for (const tool of this.getActiveTools()) {
+    const activeTools = this.getActiveTools();
+    for (const tool of activeTools) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
       if ((tool as DiscoveredMCPTool)?.serverName === serverName) {
         serverTools.push(tool);

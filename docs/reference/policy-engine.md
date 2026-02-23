@@ -153,6 +153,10 @@ A rule matches a tool call if all of its conditions are met:
     are converted to a stable JSON string, which is then tested against the
     provided regular expression. If the arguments don't match the pattern, the
     rule does not apply.
+3.  **Tool annotations**: If `toolAnnotations` is specified, the rule matches
+    only if all key-value pairs in the rule are present and match exactly in the
+    tool's metadata. For example, a rule with `{ readOnlyHint = true }` matches
+    any tool that provides that hint.
 
 ## Configuration
 
@@ -204,6 +208,10 @@ toolName = "run_shell_command"
 # (Optional) The name of an MCP server. Can be combined with toolName
 # to form a composite name like "mcpName__toolName".
 mcpName = "my-custom-server"
+
+# (Optional) Metadata hints provided by the tool. A rule matches if all
+# key-value pairs provided here are present in the tool's annotations.
+toolAnnotations = { readOnlyHint = true }
 
 # (Optional) A regex to match against the tool's arguments.
 argsPattern = '"command":"(git|npm)'
@@ -328,6 +336,31 @@ regardless of which server provides it.
 mcpName = "*"
 toolName = "search"
 decision = "allow"
+priority = 50
+```
+
+### Semantic matching with tool annotations
+
+You can create rules that match tools based on their behavior hints
+(annotations). This is especially useful for setting global policies for tools
+from Model Context Protocol (MCP) servers, which provide
+[standard metadata hints](https://modelcontextprotocol.io/legacy/concepts/tools#available-tool-annotations)
+like `readOnlyHint`.
+
+The `toolAnnotations` field performs a **partial match**. A rule will match if
+every key-value pair specified in the policy is present and identical in the
+tool's metadata.
+
+**Example: Allowing all read-only MCP tools**
+
+This rule allows any tool from an MCP server that identifies itself as
+read-only.
+
+```toml
+[[rule]]
+mcpName = "*"
+toolAnnotations = { readOnlyHint = true }
+decision = "ask_user"
 priority = 50
 ```
 

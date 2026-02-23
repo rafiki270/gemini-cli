@@ -59,6 +59,31 @@ describe('policy.ts', () => {
       expect(mockPolicyEngine.check).toHaveBeenCalledWith(
         { name: 'test-tool', args: {} },
         undefined,
+        undefined,
+      );
+    });
+
+    it('should pass tool annotations to the policy engine', async () => {
+      const mockPolicyEngine = {
+        check: vi.fn().mockResolvedValue({ decision: PolicyDecision.ALLOW }),
+      } as unknown as Mocked<PolicyEngine>;
+
+      const mockConfig = {
+        getPolicyEngine: vi.fn().mockReturnValue(mockPolicyEngine),
+      } as unknown as Mocked<Config>;
+
+      const annotations = { readOnlyHint: true, custom: 'tag' };
+      const toolCall = {
+        request: { name: 'test-tool', args: {} },
+        tool: { name: 'test-tool', annotations },
+      } as unknown as ValidatingToolCall;
+
+      await checkPolicy(toolCall, mockConfig);
+
+      expect(mockPolicyEngine.check).toHaveBeenCalledWith(
+        expect.anything(),
+        undefined,
+        annotations,
       );
     });
 
@@ -83,6 +108,7 @@ describe('policy.ts', () => {
       expect(mockPolicyEngine.check).toHaveBeenCalledWith(
         { name: 'mcp-tool', args: {} },
         'my-server',
+        undefined,
       );
     });
 

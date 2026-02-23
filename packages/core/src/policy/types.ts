@@ -110,6 +110,12 @@ export interface PolicyRule {
   toolName?: string;
 
   /**
+   * The name of the MCP server this rule applies to.
+   * Only used for MCP tools.
+   */
+  mcpName?: string;
+
+  /**
    * Pattern to match against tool arguments.
    * Can be used for more fine-grained control.
    */
@@ -164,6 +170,12 @@ export interface SafetyCheckerRule {
    * If undefined, the rule applies to all tools.
    */
   toolName?: string;
+
+  /**
+   * The name of the MCP server this rule applies to.
+   * Only used for MCP tools.
+   */
+  mcpName?: string;
 
   /**
    * Pattern to match against tool arguments.

@@ -12,7 +12,7 @@ import { Config } from '../config/config.js';
 import { ApprovalMode } from '../policy/types.js';
 
 import { ToolRegistry, DiscoveredTool } from './tool-registry.js';
-import { DISCOVERED_TOOL_PREFIX } from './tool-names.js';
+import { DISCOVERED_TOOL_PREFIX, getToolAliases } from './tool-names.js';
 import { DiscoveredMCPTool, MCP_QUALIFIED_NAME_SEPARATOR } from './mcp-tool.js';
 import type { FunctionDeclaration, CallableTool } from '@google/genai';
 import { mcpToTool } from '@google/genai';
@@ -216,7 +216,7 @@ describe('ToolRegistry', () => {
     unsubscribe: vi.fn(),
   } as unknown as MessageBus;
   let mockConfigGetToolDiscoveryCommand: ReturnType<typeof vi.spyOn>;
-  let mockConfigGetExcludedTools: MockInstance<
+  let mockConfigGetExcludeTools: MockInstance<
     typeof Config.prototype.getExcludeTools
   >;
 
@@ -242,7 +242,7 @@ describe('ToolRegistry', () => {
       config,
       'getToolDiscoveryCommand',
     );
-    mockConfigGetExcludedTools = vi.spyOn(config, 'getExcludeTools');
+    mockConfigGetExcludeTools = vi.spyOn(config, 'getExcludeTools');
     vi.spyOn(config, 'getMcpServers');
     vi.spyOn(config, 'getMcpServerCommand');
     vi.spyOn(config, 'getPromptRegistry').mockReturnValue({
@@ -339,7 +339,38 @@ describe('ToolRegistry', () => {
       for (const tool of tools) {
         toolRegistry.registerTool(tool);
       }
-      mockConfigGetExcludedTools.mockReturnValue(new Set(excludedTools));
+
+      mockConfigGetExcludeTools.mockImplementation((toolInfo) => {
+        const excluded = new Set<string>();
+        if (!toolInfo) return new Set(excludedTools);
+        for (const info of toolInfo) {
+          const tool = Array.from(
+            (toolRegistry as any).allKnownTools.values(),
+          ).find((t: any) => t.name === info.name) as any;
+          const normalizedClassName = tool?.constructor.name.replace(/^_+/, '');
+          const aliases = getToolAliases(info.name);
+
+          // We must check if any of the possible names are in the excluded list
+          const unqualifiedName =
+            info.mcpName && info.name.startsWith(`${info.mcpName}__`)
+              ? info.name.substring(info.mcpName.length + 2)
+              : undefined;
+
+          const isExcluded =
+            excludedTools.includes(info.name) ||
+            (unqualifiedName && excludedTools.includes(unqualifiedName)) ||
+            (normalizedClassName &&
+              excludedTools.includes(normalizedClassName)) ||
+            (info.mcpName &&
+              excludedTools.includes(`${info.mcpName}__${info.name}`)) ||
+            aliases.some((a) => excludedTools.includes(a));
+
+          if (isExcluded) {
+            excluded.add(info.name);
+          }
+        }
+        return excluded;
+      });
 
       expect(toolRegistry.getAllTools()).toEqual([allowedTool]);
       expect(toolRegistry.getAllToolNames()).toEqual([allowedTool.name]);

@@ -11,7 +11,7 @@ import { isGitRepository } from '../utils/gitUtils.js';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import type { Config } from '../config/config.js';
+import type { Config, AnyDeclarativeTool } from '../config/config.js';
 import type { AgentDefinition } from '../agents/types.js';
 import { CodebaseInvestigatorAgent } from '../agents/codebase-investigator.js';
 import { GEMINI_DIR } from '../utils/paths.js';
@@ -83,8 +83,16 @@ describe('Core System Prompt (prompts.ts)', () => {
     vi.stubEnv('GEMINI_WRITE_SYSTEM_MD', undefined);
     mockConfig = {
       getToolRegistry: vi.fn().mockReturnValue({
-        getAllToolNames: vi.fn().mockReturnValue(['grep_search', 'glob']),
-        getAllTools: vi.fn().mockReturnValue([]),
+        getAllToolNames: vi
+          .fn()
+          .mockReturnValue(['grep_search', 'glob', 'read_file']),
+        getAllTools: vi
+          .fn()
+          .mockReturnValue([
+            { name: 'grep_search' },
+            { name: 'glob' },
+            { name: 'read_file' },
+          ]),
       }),
       getEnableShellOutputEfficiency: vi.fn().mockReturnValue(true),
       storage: {
@@ -450,26 +458,14 @@ describe('Core System Prompt (prompts.ts)', () => {
         {} as MessageBus,
         false,
         true, // isReadOnly
-      );
-
-      const nonReadOnlyMcpTool = new DiscoveredMCPTool(
-        {} as CallableTool,
-        'nonreadonly-server',
-        'non_read_static_value',
-        'A non-read-only tool',
-        {},
-        {} as MessageBus,
-        false,
-        false,
+        { readOnlyHint: true },
       );
 
       vi.mocked(mockConfig.getToolRegistry().getAllTools).mockReturnValue([
         readOnlyMcpTool,
-        nonReadOnlyMcpTool,
       ]);
       vi.mocked(mockConfig.getToolRegistry().getAllToolNames).mockReturnValue([
         readOnlyMcpTool.name,
-        nonReadOnlyMcpTool.name,
       ]);
 
       const prompt = getCoreSystemPrompt(mockConfig);
@@ -483,11 +479,13 @@ describe('Core System Prompt (prompts.ts)', () => {
     it('should only list available tools in PLAN mode', () => {
       vi.mocked(mockConfig.getApprovalMode).mockReturnValue(ApprovalMode.PLAN);
       // Only enable a subset of tools, including ask_user
-      vi.mocked(mockConfig.getToolRegistry().getAllToolNames).mockReturnValue([
-        'glob',
-        'read_file',
-        'ask_user',
-      ]);
+      const enabledNames = ['glob', 'read_file', 'ask_user'];
+      vi.mocked(mockConfig.getToolRegistry().getAllToolNames).mockReturnValue(
+        enabledNames,
+      );
+      vi.mocked(mockConfig.getToolRegistry().getAllTools).mockReturnValue(
+        enabledNames.map((name) => ({ name })) as AnyDeclarativeTool[],
+      );
 
       const prompt = getCoreSystemPrompt(mockConfig);
 

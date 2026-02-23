@@ -906,6 +906,7 @@ describe('DiscoveredMCPTool', () => {
         trust,
         undefined,
         undefined,
+        undefined,
         mockConfig(isTrusted) as any,
         undefined,
         undefined,
@@ -921,6 +922,25 @@ describe('DiscoveredMCPTool', () => {
       } else {
         expect(confirmation).toBe(false);
       }
+    });
+  });
+
+  describe('annotations', () => {
+    it('should store and retrieve tool annotations', () => {
+      const annotations = { readOnlyHint: true, custom: 'data' };
+      const annotatedTool = new DiscoveredMCPTool(
+        mockCallableToolInstance,
+        serverName,
+        serverToolName,
+        baseDescription,
+        inputSchema,
+        createMockMessageBus(),
+        false,
+        true,
+        annotations,
+      );
+
+      expect(annotatedTool.annotations).toEqual(annotations);
     });
   });
 

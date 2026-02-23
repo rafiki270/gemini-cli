@@ -22,12 +22,13 @@ import {
 import { CodebaseInvestigatorAgent } from '../agents/codebase-investigator.js';
 import { isGitRepository } from '../utils/gitUtils.js';
 import {
-  PLAN_MODE_TOOLS,
   WRITE_TODOS_TOOL_NAME,
   READ_FILE_TOOL_NAME,
   ENTER_PLAN_MODE_TOOL_NAME,
   GLOB_TOOL_NAME,
   GREP_TOOL_NAME,
+  WRITE_FILE_TOOL_NAME,
+  EDIT_TOOL_NAME,
 } from '../tools/tool-names.js';
 import { resolveModel, supportsModernFeatures } from '../config/models.js';
 import { DiscoveredMCPTool } from '../tools/mcp-tool.js';
@@ -67,25 +68,25 @@ export class PromptProvider {
     const contextFilenames = getAllGeminiMdFilenames();
 
     // --- Context Gathering ---
-    let planModeToolsList = PLAN_MODE_TOOLS.filter((t) =>
-      enabledToolNames.has(t),
-    )
-      .map((t) => `  <tool>\`${t}\`</tool>`)
-      .join('\n');
-
-    // Add read-only MCP tools to the list
+    let planModeToolsList = '';
     if (isPlanMode) {
-      const allTools = config.getToolRegistry().getAllTools();
-      const readOnlyMcpTools = allTools.filter(
-        (t): t is DiscoveredMCPTool =>
-          t instanceof DiscoveredMCPTool && !!t.isReadOnly,
-      );
-      if (readOnlyMcpTools.length > 0) {
-        const mcpToolsList = readOnlyMcpTools
-          .map((t) => `  <tool>\`${t.name}\` (${t.serverName})</tool>`)
-          .join('\n');
-        planModeToolsList += `\n${mcpToolsList}`;
-      }
+      const allActiveTools = config.getToolRegistry().getAllTools();
+      planModeToolsList = allActiveTools
+        .map((t) => {
+          let line = '';
+          if (t instanceof DiscoveredMCPTool) {
+            line = `  <tool>\`${t.name}\` (${t.serverName})</tool>`;
+          } else {
+            line = `  <tool>\`${t.name}\`</tool>`;
+          }
+
+          if (t.name === WRITE_FILE_TOOL_NAME || t.name === EDIT_TOOL_NAME) {
+            line +=
+              ' (ONLY for writing and updating plans in the plans directory)';
+          }
+          return line;
+        })
+        .join('\n');
     }
 
     let basePrompt: string;

@@ -1561,7 +1561,13 @@ export class Config {
    *
    * May change over time.
    */
-  getExcludeTools(): Set<string> | undefined {
+  getExcludeTools(
+    tools?: Array<{
+      name: string;
+      annotations?: Record<string, unknown>;
+      mcpName?: string;
+    }>,
+  ): Set<string> | undefined {
     // Right now this is present for backward compatibility with settings.json exclude
     const excludeToolsSet = new Set([...(this.excludeTools ?? [])]);
     for (const extension of this.getExtensionLoader().getExtensions()) {
@@ -1573,7 +1579,7 @@ export class Config {
       }
     }
 
-    const policyExclusions = this.policyEngine.getExcludedTools();
+    const policyExclusions = this.policyEngine.getExcludedToolsSync(tools);
     for (const tool of policyExclusions) {
       excludeToolsSet.add(tool);
     }

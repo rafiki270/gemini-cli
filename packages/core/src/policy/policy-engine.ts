@@ -17,7 +17,19 @@ import {
 import { stableStringify } from './stable-stringify.js';
 import { debugLogger } from '../utils/debugLogger.js';
 import type { CheckerRunner } from '../safety/checker-runner.js';
-import { SafetyCheckDecision } from '../safety/protocol.js';
+import {
+  SafetyCheckDecision,
+  type SafetyCheckInput,
+} from '../safety/protocol.js';
+
+/**
+ * Check if a rule or safety checker rule is a policy rule (has a decision).
+ */
+function isPolicyRule(
+  rule: PolicyRule | SafetyCheckerRule,
+): rule is PolicyRule {
+  return 'decision' in rule;
+}
 import {
   SHELL_TOOL_NAMES,
   initializeShellParsers,
@@ -103,6 +115,7 @@ function ruleMatches(
   serverName: string | undefined,
   currentApprovalMode: ApprovalMode,
   toolAnnotations?: Record<string, unknown>,
+  options: { visibility?: boolean } = {},
 ): boolean {
   // Check if rule applies to current approval mode
   if (rule.modes && rule.modes.length > 0) {
@@ -125,7 +138,20 @@ function ruleMatches(
     }
   }
 
-  // Check annotations if specified
+  // Check MCP server name if specified
+  if (rule.mcpName) {
+    if (rule.mcpName === '*') {
+      if (serverName === undefined) {
+        return false;
+      }
+    } else if (serverName !== rule.mcpName) {
+      return false;
+    }
+  }
+
+  // Check annotations if specified.
+  // Rule annotations are a subset: the rule matches if ALL its specified
+  // annotations match the tool's actual annotations.
   if (rule.toolAnnotations) {
     if (!toolAnnotations) {
       return false;
@@ -139,6 +165,12 @@ function ruleMatches(
 
   // Check args pattern if specified
   if (rule.argsPattern) {
+    // For visibility checks, if a tool has an args-specific rule that is NOT a DENY,
+    // we consider it visible because it *could* be used.
+    if (options.visibility) {
+      return isPolicyRule(rule) && rule.decision !== PolicyDecision.DENY;
+    }
+
     // If rule has an args pattern but tool has no args, no match
     if (!toolCall.args) {
       return false;
@@ -218,6 +250,8 @@ export class PolicyEngine {
     allowRedirection?: boolean,
     rule?: PolicyRule,
     toolAnnotations?: Record<string, unknown>,
+    currentApprovalMode: ApprovalMode = this.approvalMode,
+    options: { visibility?: boolean } = {},
   ): Promise<CheckResult> {
     if (!command) {
       return {
@@ -309,6 +343,8 @@ export class PolicyEngine {
           { name: toolName, args: { command: subCmd, dir_path } },
           serverName,
           toolAnnotations,
+          undefined,
+          { ...options, mode: currentApprovalMode },
         );
 
         // subResult.decision is already filtered through applyNonInteractiveMode by this.check()
@@ -360,6 +396,119 @@ export class PolicyEngine {
   }
 
   /**
+   * Checks if a tool should be visible to the model based on global rules.
+   * This is a synchronous version of check() that skips shell parsing and safety checkers.
+   */
+  checkVisibility(
+    toolName: string,
+    toolAnnotations?: Record<string, unknown>,
+    options: {
+      mode?: ApprovalMode;
+      mcpName?: string;
+    } = {},
+  ): CheckResult {
+    const targetMode = options.mode ?? this.approvalMode;
+    const serverName = options.mcpName;
+
+    const toolCall: FunctionCall = { name: toolName, args: {} };
+    const toolNamesToTry = getToolAliases(toolName);
+    const toolCallsToTry: FunctionCall[] = [];
+    for (const name of toolNamesToTry) {
+      toolCallsToTry.push({ ...toolCall, name });
+      if (serverName && !name.includes('__')) {
+        toolCallsToTry.push({
+          ...toolCall,
+          name: `${serverName}__${name}`,
+        });
+      }
+    }
+
+    for (const rule of this.rules) {
+      if (rule.argsPattern) continue;
+
+      const match = toolCallsToTry.some((tc) =>
+        ruleMatches(
+          rule,
+          tc,
+          undefined,
+          serverName,
+          targetMode,
+          toolAnnotations,
+          { visibility: true },
+        ),
+      );
+
+      if (match) {
+        return {
+          decision: this.applyNonInteractiveMode(rule.decision),
+          rule,
+        };
+      }
+    }
+
+    return {
+      decision: this.applyNonInteractiveMode(this.defaultDecision),
+    };
+  }
+
+  /**
+   * Synchronous version of check for simple cases (no shell parsing, no safety checkers).
+   * Useful for visibility checks and prompt generation.
+   */
+  checkSync(
+    toolName: string,
+    toolAnnotations?: Record<string, unknown>,
+    options: {
+      mode?: ApprovalMode;
+      mcpName?: string;
+      visibility?: boolean;
+    } = {},
+  ): CheckResult {
+    const targetMode = options.mode ?? this.approvalMode;
+    const serverName = options.mcpName;
+
+    const toolCall: FunctionCall = { name: toolName, args: {} };
+    const toolNamesToTry = getToolAliases(toolName);
+    const toolCallsToTry: FunctionCall[] = [];
+    for (const name of toolNamesToTry) {
+      toolCallsToTry.push({ ...toolCall, name });
+      if (serverName && !name.includes('__')) {
+        toolCallsToTry.push({
+          ...toolCall,
+          name: `${serverName}__${name}`,
+        });
+      }
+    }
+
+    for (const rule of this.rules) {
+      if (rule.argsPattern) continue;
+
+      const match = toolCallsToTry.some((tc) =>
+        ruleMatches(
+          rule,
+          tc,
+          undefined,
+          serverName,
+          targetMode,
+          toolAnnotations,
+          options,
+        ),
+      );
+
+      if (match) {
+        return {
+          decision: this.applyNonInteractiveMode(rule.decision),
+          rule,
+        };
+      }
+    }
+
+    return {
+      decision: this.applyNonInteractiveMode(this.defaultDecision),
+    };
+  }
+
+  /**
    * Check if a tool call is allowed based on the configured policies.
    * Returns the decision and the matching rule (if any).
    */
@@ -367,7 +516,10 @@ export class PolicyEngine {
     toolCall: FunctionCall,
     serverName: string | undefined,
     toolAnnotations?: Record<string, unknown>,
+    checkerContext?: SafetyCheckInput['context'],
+    options: { visibility?: boolean; mode?: ApprovalMode } = {},
   ): Promise<CheckResult> {
+    const targetMode = options.mode ?? this.approvalMode;
     let stringifiedArgs: string | undefined;
     // Compute stringified args once before the loop
     if (
@@ -424,14 +576,15 @@ export class PolicyEngine {
           tc,
           stringifiedArgs,
           serverName,
-          this.approvalMode,
+          targetMode,
           toolAnnotations,
+          options,
         ),
       );
 
       if (match) {
         debugLogger.debug(
-          `[PolicyEngine.check] MATCHED rule: toolName=${rule.toolName}, decision=${rule.decision}, priority=${rule.priority}, argsPattern=${rule.argsPattern?.source || 'none'}`,
+          `[PolicyEngine.check] MATCHED rule: toolName=${rule.toolName}, decision=${rule.decision}, priority=${rule.priority}, argsPattern=${rule.argsPattern?.source || 'none'}, modes=${rule.modes?.join(',') || 'any'}`,
         );
 
         if (isShellCommand && toolName) {
@@ -444,6 +597,8 @@ export class PolicyEngine {
             rule.allowRedirection,
             rule,
             toolAnnotations,
+            targetMode,
+            options,
           );
           decision = shellResult.decision;
           if (shellResult.rule) {
@@ -473,6 +628,8 @@ export class PolicyEngine {
           undefined,
           undefined,
           toolAnnotations,
+          targetMode,
+          options,
         );
         decision = shellResult.decision;
         matchedRule = shellResult.rule;
@@ -490,8 +647,9 @@ export class PolicyEngine {
             toolCall,
             stringifiedArgs,
             serverName,
-            this.approvalMode,
+            targetMode,
             toolAnnotations,
+            options,
           )
         ) {
           debugLogger.debug(
@@ -619,14 +777,31 @@ export class PolicyEngine {
   }
 
   /**
-   * Get tools that are effectively denied by the current rules.
-   * This takes into account:
-   * 1. Global rules (no argsPattern)
-   * 2. Priority order (higher priority wins)
-   * 3. Non-interactive mode (ASK_USER becomes DENY)
+   * Synchronous version of getExcludedTools.
    */
-  getExcludedTools(): Set<string> {
+  getExcludedToolsSync(
+    tools?: Array<{
+      name: string;
+      annotations?: Record<string, unknown>;
+      mcpName?: string;
+    }>,
+  ): Set<string> {
     const excludedTools = new Set<string>();
+
+    if (tools) {
+      for (const tool of tools) {
+        const result = this.checkSync(tool.name, tool.annotations, {
+          mcpName: tool.mcpName,
+          visibility: true,
+        });
+
+        if (result.decision === PolicyDecision.DENY) {
+          excludedTools.add(tool.name);
+        }
+      }
+      return excludedTools;
+    }
+
     const processedTools = new Set<string>();
     let globalVerdict: PolicyDecision | undefined;
 
@@ -702,6 +877,28 @@ export class PolicyEngine {
       }
     }
     return excludedTools;
+  }
+
+  /**
+   * Get tools that are effectively denied by the current rules.
+   * This takes into account:
+   * 1. Global rules (no argsPattern)
+   * 2. Priority order (higher priority wins)
+   * 3. Non-interactive mode (ASK_USER becomes DENY)
+   * 4. Tool-specific metadata (annotations)
+   *
+   * If `tools` is provided, it returns the set of tool names from that list
+   * that are currently DENYed. Otherwise, it returns the set of all tool names
+   * explicitly DENYed in the policy (legacy behavior).
+   */
+  async getExcludedTools(
+    tools?: Array<{
+      name: string;
+      annotations?: Record<string, unknown>;
+      mcpName?: string;
+    }>,
+  ): Promise<Set<string>> {
+    return this.getExcludedToolsSync(tools);
   }
 
   private applyNonInteractiveMode(decision: PolicyDecision): PolicyDecision {

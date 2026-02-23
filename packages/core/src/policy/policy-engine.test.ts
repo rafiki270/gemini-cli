@@ -2365,13 +2365,13 @@ describe('PolicyEngine', () => {
 
     it.each(testCases)(
       '$name',
-      ({ rules, approvalMode, nonInteractive, expected }) => {
+      async ({ rules, approvalMode, nonInteractive, expected }) => {
         engine = new PolicyEngine({
           rules,
           approvalMode: approvalMode ?? ApprovalMode.DEFAULT,
           nonInteractive: nonInteractive ?? false,
         });
-        const excluded = engine.getExcludedTools();
+        const excluded = await engine.getExcludedTools();
         expect(Array.from(excluded).sort()).toEqual(expected.sort());
       },
     );

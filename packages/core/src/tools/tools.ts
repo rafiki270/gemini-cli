@@ -339,6 +339,11 @@ export interface ToolBuilder<
   isReadOnly: boolean;
 
   /**
+   * Optional metadata hints about the tool.
+   */
+  readonly annotations?: Record<string, unknown>;
+
+  /**
    * Validates raw parameters and builds a ready-to-execute invocation.
    * @param params The raw, untrusted parameters from the model.
    * @returns A valid `ToolInvocation` if successful. Throws an error if validation fails.
@@ -364,6 +369,7 @@ export abstract class DeclarativeTool<
     readonly messageBus: MessageBus,
     readonly isOutputMarkdown: boolean = true,
     readonly canUpdateOutput: boolean = false,
+    readonly annotations?: Record<string, unknown>,
     readonly extensionName?: string,
     readonly extensionId?: string,
   ) {}
