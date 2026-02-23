@@ -431,7 +431,7 @@ export class PolicyEngine {
 
       if (match) {
         debugLogger.debug(
-          `[PolicyEngine.check] MATCHED rule: toolName=${rule.toolName}, decision=${rule.decision}, priority=${rule.priority}, argsPattern=${rule.argsPattern?.source || 'none'}`,
+          `[PolicyEngine.check] MATCHED rule: toolName=${rule.toolName}, decision=${rule.decision}, priority=${rule.priority}, argsPattern=${rule.argsPattern?.source || 'none'}, modes=${rule.modes?.join(',') || 'any'}`,
         );
 
         if (isShellCommand && toolName) {

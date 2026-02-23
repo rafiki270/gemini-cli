@@ -24,6 +24,7 @@ implementation. It allows you to:
 - [Tool Restrictions](#tool-restrictions)
   - [Customizing Planning with Skills](#customizing-planning-with-skills)
   - [Customizing Policies](#customizing-policies)
+    - [Example: Automatically approve read-only MCP tools](#example-automatically-approve-read-only-mcp-tools)
     - [Example: Allow git commands in Plan Mode](#example-allow-git-commands-in-plan-mode)
     - [Example: Enable research subagents in Plan Mode](#example-enable-research-subagents-in-plan-mode)
   - [Custom Plan Directory and Policies](#custom-plan-directory-and-policies)
@@ -106,7 +107,8 @@ To exit Plan Mode, you can:
 
 ## Tool Restrictions
 
-Plan Mode enforces strict safety policies to prevent accidental changes.
+Plan Mode enforces strict safety policies to prevent accidental changes, defined
+in the built-in [`plan.toml`] policy file.
 
 These are the only allowed tools:
 
@@ -143,13 +145,27 @@ based on the task description.
 
 ### Customizing Policies
 
-Plan Mode is designed to be read-only by default to ensure safety during the
-research phase. However, you may occasionally need to allow specific tools to
-assist in your planning.
+Plan Mode's default tool restrictions are managed by the [policy engine] and
+defined in the built-in [`plan.toml`] file. The built-in policy (Tier 1)
+enforces the read-only state, but you can customize these rules by creating your
+own policies in your `~/.gemini/policies/` directory (Tier 2).
 
-Because user policies (Tier 2) have a higher base priority than built-in
-policies (Tier 1), you can override Plan Mode's default restrictions by creating
-a rule in your `~/.gemini/policies/` directory.
+#### Example: Automatically approve read-only MCP tools
+
+By default, read-only MCP tools require user confirmation in Plan Mode. You can
+use `toolAnnotations` and the `mcpName` wildcard to customize this behavior for
+your specific environment.
+
+`~/.gemini/policies/mcp-read-only.toml`
+
+```toml
+[[rule]]
+mcpName = "*"
+toolAnnotations = { readOnlyHint = true }
+decision = "allow"
+priority = 100
+modes = ["plan"]
+```
 
 #### Example: Allow git commands in Plan Mode
 
@@ -243,3 +259,5 @@ argsPattern = "\"file_path\":\"[^\"]+[\\\\/]+\\.gemini[\\\\/]+plans[\\\\/]+[\\w-
 [`exit_plan_mode`]: /docs/tools/planning.md#2-exit_plan_mode-exitplanmode
 [`ask_user`]: /docs/tools/ask-user.md
 [YOLO mode]: /docs/reference/configuration.md#command-line-arguments
+[`plan.toml`]:
+  https://github.com/google-gemini/gemini-cli/blob/main/packages/core/src/policy/policies/plan.toml

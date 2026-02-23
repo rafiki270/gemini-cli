@@ -352,6 +352,30 @@ describe('Policy Engine Integration Tests', () => {
       ).toBe(PolicyDecision.DENY);
     });
 
+    it('should allow read-only MCP tools in Plan Mode (with confirmation)', async () => {
+      const settings: Settings = {};
+
+      const config = await createPolicyEngineConfig(
+        settings,
+        ApprovalMode.PLAN,
+      );
+      const engine = new PolicyEngine(config);
+
+      // A read-only MCP tool should ASK_USER based on the declarative plan.toml policy
+      const roMcpCall = { name: 'mcp__list', args: {} };
+      const roMcpMeta = { readOnlyHint: true };
+      expect((await engine.check(roMcpCall, 'mcp', roMcpMeta)).decision).toBe(
+        PolicyDecision.ASK_USER,
+      );
+
+      // A regular MCP tool (not read-only) should be DENIED by the catch-all
+      const rwMcpCall = { name: 'mcp__delete', args: {} };
+      const rwMcpMeta = { readOnlyHint: false };
+      expect((await engine.check(rwMcpCall, 'mcp', rwMcpMeta)).decision).toBe(
+        PolicyDecision.DENY,
+      );
+    });
+
     it('should correctly match tool annotations', async () => {
       const settings: Settings = {};
 
@@ -360,28 +384,75 @@ describe('Policy Engine Integration Tests', () => {
         ApprovalMode.DEFAULT,
       );
 
-      // Add a manual rule with annotations to the config
+      // Add manual rules with various annotations to the config
       config.rules = config.rules || [];
-      config.rules.push({
-        toolAnnotations: { readOnlyHint: true },
-        decision: PolicyDecision.ALLOW,
-        priority: 10,
-      });
+      config.rules.push(
+        {
+          toolAnnotations: { readOnlyHint: true },
+          decision: PolicyDecision.ALLOW,
+          priority: 10,
+        },
+        {
+          toolAnnotations: { destructiveHint: true },
+          decision: PolicyDecision.DENY,
+          priority: 20,
+        },
+        {
+          toolAnnotations: { idempotentHint: true },
+          decision: PolicyDecision.ALLOW,
+          priority: 30,
+        },
+        {
+          toolAnnotations: { openWorldHint: true },
+          decision: PolicyDecision.ASK_USER,
+          priority: 40,
+        },
+      );
 
       const engine = new PolicyEngine(config);
 
-      // A tool with readOnlyHint=true should be ALLOWED
-      const roCall = { name: 'some_tool', args: {} };
+      // 1. readOnlyHint=true should be ALLOWED (priority 10)
+      const roCall = { name: 'ro_tool', args: {} };
       const roMeta = { readOnlyHint: true };
       expect((await engine.check(roCall, undefined, roMeta)).decision).toBe(
         PolicyDecision.ALLOW,
       );
 
-      // A tool without the hint (or with false) should follow default decision (ASK_USER)
-      const rwMeta = { readOnlyHint: false };
-      expect((await engine.check(roCall, undefined, rwMeta)).decision).toBe(
-        PolicyDecision.ASK_USER,
-      );
+      // 2. destructiveHint=true should be DENIED (priority 20)
+      const destructiveCall = { name: 'danger_tool', args: {} };
+      const destructiveMeta = { destructiveHint: true };
+      expect(
+        (await engine.check(destructiveCall, undefined, destructiveMeta))
+          .decision,
+      ).toBe(PolicyDecision.DENY);
+
+      // 3. idempotentHint=true should be ALLOWED (priority 30)
+      const idempotentCall = { name: 'retry_tool', args: {} };
+      const idempotentMeta = { idempotentHint: true };
+      expect(
+        (await engine.check(idempotentCall, undefined, idempotentMeta))
+          .decision,
+      ).toBe(PolicyDecision.ALLOW);
+
+      // 4. openWorldHint=true should ASK_USER (priority 40)
+      const externalCall = { name: 'web_tool', args: {} };
+      const externalMeta = { openWorldHint: true };
+      expect(
+        (await engine.check(externalCall, undefined, externalMeta)).decision,
+      ).toBe(PolicyDecision.ASK_USER);
+
+      // 5. Multiple annotations (partial match)
+      // A tool with both readOnly and custom metadata should still match the readOnly rule
+      const complexMeta = { readOnlyHint: true, custom: 'data' };
+      expect(
+        (await engine.check(roCall, undefined, complexMeta)).decision,
+      ).toBe(PolicyDecision.ALLOW);
+
+      // 6. Default decision for no match (ASK_USER)
+      const unknownMeta = { someOtherHint: true };
+      expect(
+        (await engine.check(roCall, undefined, unknownMeta)).decision,
+      ).toBe(PolicyDecision.ASK_USER);
     });
 
     describe.each(['write_file', 'replace'])(

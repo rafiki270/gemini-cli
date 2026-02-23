@@ -23,7 +23,6 @@ import {
   ResourceListChangedNotificationSchema,
   ToolListChangedNotificationSchema,
 } from '@modelcontextprotocol/sdk/types.js';
-import { ApprovalMode, PolicyDecision } from '../policy/types.js';
 
 import { WorkspaceContext } from '../utils/workspaceContext.js';
 import {
@@ -459,20 +458,20 @@ describe('mcp-client', () => {
       await client.connect();
       await client.discover(mockConfig);
 
-      // Verify tool registration
-      expect(mockedToolRegistry.registerTool).toHaveBeenCalledOnce();
+      // Verify tool registration with isReadOnly: true and annotations
+      expect(mockedToolRegistry.registerTool).toHaveBeenCalledWith(
+        expect.objectContaining({
+          name: 'readOnlyTool',
+          _isReadOnly: true,
+          annotations: { readOnlyHint: true },
+        }),
+      );
 
-      // Verify policy rule addition
-      expect(mockPolicyEngine.addRule).toHaveBeenCalledWith({
-        toolName: 'test-server__readOnlyTool',
-        decision: PolicyDecision.ASK_USER,
-        priority: 50,
-        modes: [ApprovalMode.PLAN],
-        source: 'MCP Annotation (readOnlyHint) - test-server',
-      });
+      // Verify policy rule was NOT added (now handled by plan.toml)
+      expect(mockPolicyEngine.addRule).not.toHaveBeenCalled();
     });
 
-    it('should not add policy rule for tool without readOnlyHint', async () => {
+    it('should correctly capture tool annotations during discovery', async () => {
       const mockedClient = {
         connect: vi.fn(),
         discover: vi.fn(),
@@ -485,10 +484,16 @@ describe('mcp-client', () => {
         listTools: vi.fn().mockResolvedValue({
           tools: [
             {
-              name: 'writeTool',
-              description: 'A write tool',
+              name: 'annotatedTool',
+              description: 'A tool with annotations',
               inputSchema: { type: 'object', properties: {} },
-              // No annotations or readOnlyHint: false
+              annotations: {
+                title: 'Friendly Name',
+                readOnlyHint: true,
+                destructiveHint: false,
+                idempotentHint: true,
+                openWorldHint: false,
+              },
             },
           ],
         }),
@@ -501,13 +506,6 @@ describe('mcp-client', () => {
       vi.spyOn(SdkClientStdioLib, 'StdioClientTransport').mockReturnValue(
         {} as SdkClientStdioLib.StdioClientTransport,
       );
-
-      const mockPolicyEngine = {
-        addRule: vi.fn(),
-      };
-      const mockConfig = {
-        getPolicyEngine: vi.fn().mockReturnValue(mockPolicyEngine),
-      } as unknown as Config;
 
       const mockedToolRegistry = {
         registerTool: vi.fn(),
@@ -537,10 +535,23 @@ describe('mcp-client', () => {
       );
 
       await client.connect();
-      await client.discover(mockConfig);
+      await client.discover({
+        getPolicyEngine: () => ({ addRule: vi.fn() }),
+      } as unknown as Config);
 
-      expect(mockedToolRegistry.registerTool).toHaveBeenCalledOnce();
-      expect(mockPolicyEngine.addRule).not.toHaveBeenCalled();
+      // Verify tool registration with full annotations
+      expect(mockedToolRegistry.registerTool).toHaveBeenCalledWith(
+        expect.objectContaining({
+          name: 'annotatedTool',
+          annotations: {
+            title: 'Friendly Name',
+            readOnlyHint: true,
+            destructiveHint: false,
+            idempotentHint: true,
+            openWorldHint: false,
+          },
+        }),
+      );
     });
 
     it('should discover tools with $defs and $ref in schema', async () => {

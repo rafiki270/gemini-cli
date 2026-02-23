@@ -59,6 +59,7 @@ export async function checkPolicy(
     .check(
       { name: toolCall.request.name, args: toolCall.request.args },
       serverName,
+      toolCall.tool.annotations,
     );
 
   const { decision } = result;
