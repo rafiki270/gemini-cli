@@ -416,6 +416,7 @@ export const commandCategories: readonly CommandCategory[] = [
       Command.SHOW_SHELL_INPUT_UNFOCUS_WARNING,
       Command.FOCUS_SHELL_INPUT,
       Command.UNFOCUS_SHELL_INPUT,
+      Command.OPEN_PLAN_IN_EDITOR,
       Command.CLEAR_SCREEN,
       Command.RESTART_APP,
       Command.SUSPEND_APP,
