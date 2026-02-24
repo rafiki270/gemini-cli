@@ -9,6 +9,10 @@ powerful tool for developers.
 - **Purpose:** Provide a seamless terminal interface for Gemini models,
   supporting code understanding, generation, automation, and integration via MCP
   (Model Context Protocol).
+- **Maintenance Policy:** All personal versions MUST follow the format:
+  `[Original Version]-no-bother` (e.g., `0.30.0-no-bother`). When rebasing from
+  the main repository, ensure this naming convention is preserved to distinguish
+  the persistent retry edition.
 - **Main Technologies:**
   - **Runtime:** Node.js (>=20.0.0, recommended ~20.19.0 for development)
   - **Language:** TypeScript
@@ -45,7 +49,7 @@ powerful tool for developers.
   - **Integration (E2E):** `npm run test:e2e`
   - **Workspace-Specific:** `npm test -w <pkg> -- <path>` (Note: `<path>` must
     be relative to the workspace root, e.g.,
-    `-w @google/gemini-cli-core -- src/routing/modelRouterService.test.ts`)
+    `-w @rafiki270/gemini-cli-core -- src/routing/modelRouterService.test.ts`)
 - **Full Validation:** `npm run preflight` (Heaviest check; runs clean, install,
   build, lint, type check, and tests. Recommended before submitting PRs. Due to
   its long runtime, only run this at the very end of a code implementation task.
