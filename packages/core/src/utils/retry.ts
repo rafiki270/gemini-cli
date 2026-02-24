@@ -188,7 +188,7 @@ export async function retryWithBackoff<T>(
   let attempt = 0;
   let currentDelay = initialDelayMs;
 
-  while (attempt < maxAttempts) {
+  while (true) {
     if (signal?.aborted) {
       throw createAbortError();
     }
@@ -285,10 +285,6 @@ export async function retryWithBackoff<T>(
         } else {
           delayMs = 30000;
         }
-
-        // We bypass the maxAttempts check for these errors to "keep trying" as requested.
-        const errorStatus = getErrorStatus(error);
-        logRetryAttempt(attempt, error, errorStatus);
 
         const visibleMessage = `[Attempt ${attempt}] High demand or server error. Retrying in ${delayMs / 1000}s...\n`;
         writeToStderr(visibleMessage);
