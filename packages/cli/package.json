@@ -1,6 +1,9 @@
 {
   "name": "@unlikeotherai/gemini-cli",
-  "version": "0.30.0-no-bother",
+  "version": "0.30.0-no-bother-0.1",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  },
   "description": "Gemini CLI",
   "license": "Apache-2.0",
   "repository": {

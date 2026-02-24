@@ -9,10 +9,16 @@ powerful tool for developers.
 - **Purpose:** Provide a seamless terminal interface for Gemini models,
   supporting code understanding, generation, automation, and integration via MCP
   (Model Context Protocol).
-- **Maintenance Policy:** All personal versions MUST follow the format:
-  `[Original Version]-no-bother` (e.g., `0.30.0-no-bother`). When rebasing from
-  the main repository, ensure this naming convention is preserved to distinguish
-  the persistent retry edition.
+- **Maintenance & Versioning Policy:**
+  - **Preserve Upstream Version:** Never change the base version number (e.g.,
+    `0.30.0`) manually. This number must always reflect the version from the
+    original Google repository.
+  - **Overlay Suffix:** All builds and releases from this fork MUST append the
+    `-no-bother` suffix.
+  - **Rebase Rule:** When rebasing from the main repository, if the upstream
+    version changes to `X.Y.Z`, the local version must immediately be updated to
+    `X.Y.Z-no-bother`.
+  - **Format:** `[Upstream Version]-no-bother` (e.g., `0.30.0-no-bother`).
 - **Main Technologies:**
   - **Runtime:** Node.js (>=20.0.0, recommended ~20.19.0 for development)
   - **Language:** TypeScript
