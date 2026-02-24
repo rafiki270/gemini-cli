@@ -116,7 +116,7 @@ priority = 10
 `);
 
       expect(result.rules).toHaveLength(1);
-      expect(result.rules[0].toolName).toBe('*__*');
+      expect(result.rules[0].toolName).toBe('*');
       expect(result.rules[0].decision).toBe(PolicyDecision.ASK_USER);
       expect(result.errors).toHaveLength(0);
     });
@@ -131,7 +131,7 @@ priority = 10
 `);
 
       expect(result.rules).toHaveLength(1);
-      expect(result.rules[0].toolName).toBe('*__search');
+      expect(result.rules[0].toolName).toBe('search');
       expect(result.errors).toHaveLength(0);
     });
 
@@ -658,6 +658,127 @@ priority = 100
           readResult.decision,
           'Explicitly allowed tools (read_file) should be ALLOWED in Plan Mode',
         ).toBe(PolicyDecision.ALLOW);
+      } finally {
+        await fs.rm(tempPolicyDir, { recursive: true, force: true });
+      }
+    });
+
+    it('should allow read-only MCP tools via annotations in Plan Mode', async () => {
+      const planTomlPath = path.resolve(__dirname, 'policies', 'plan.toml');
+      const fileContent = await fs.readFile(planTomlPath, 'utf-8');
+      const tempPolicyDir = await fs.mkdtemp(
+        path.join(os.tmpdir(), 'plan-policy-mcp-test-'),
+      );
+      try {
+        await fs.writeFile(path.join(tempPolicyDir, 'plan.toml'), fileContent);
+        const result = await loadPoliciesFromToml([tempPolicyDir], () => 1);
+
+        const engine = new PolicyEngine({
+          rules: result.rules,
+          approvalMode: ApprovalMode.PLAN,
+        });
+
+        // Read-only MCP tool with annotations and serverName should be ASK_USER
+        const readOnlyResult = await engine.check(
+          { name: 'mcp_read_tool' },
+          'test-server',
+          { readOnlyHint: true },
+        );
+        expect(
+          readOnlyResult.decision,
+          'Read-only MCP tool with serverName should be ASK_USER in Plan Mode',
+        ).toBe(PolicyDecision.ASK_USER);
+
+        // Read-only MCP tool without serverName should still be ASK_USER
+        // (mcpName="*" produces a global wildcard, not a composite pattern)
+        const noServerResult = await engine.check(
+          { name: 'mcp_read_tool' },
+          undefined,
+          { readOnlyHint: true },
+        );
+        expect(
+          noServerResult.decision,
+          'Read-only MCP tool without serverName should be ASK_USER in Plan Mode',
+        ).toBe(PolicyDecision.ASK_USER);
+
+        // MCP tool without readOnlyHint annotation should be DENIED
+        const noAnnotationResult = await engine.check(
+          { name: 'mcp_write_tool' },
+          'test-server',
+          undefined,
+        );
+        expect(
+          noAnnotationResult.decision,
+          'MCP tool without annotations should be DENIED in Plan Mode',
+        ).toBe(PolicyDecision.DENY);
+
+        // MCP tool with readOnlyHint=false should be DENIED
+        const writeToolResult = await engine.check(
+          { name: 'mcp_write_tool' },
+          'test-server',
+          { readOnlyHint: false },
+        );
+        expect(
+          writeToolResult.decision,
+          'MCP tool with readOnlyHint=false should be DENIED in Plan Mode',
+        ).toBe(PolicyDecision.DENY);
+      } finally {
+        await fs.rm(tempPolicyDir, { recursive: true, force: true });
+      }
+    });
+
+    it('should match mcpName="*" with toolName across all servers', async () => {
+      const tempPolicyDir = await fs.mkdtemp(
+        path.join(os.tmpdir(), 'plan-policy-mcp-wildcard-test-'),
+      );
+      try {
+        // A policy that targets a specific tool name across all MCP servers
+        await fs.writeFile(
+          path.join(tempPolicyDir, 'custom.toml'),
+          `
+[[rule]]
+mcpName = "*"
+toolName = "search"
+decision = "allow"
+priority = 50
+
+[[rule]]
+decision = "deny"
+priority = 10
+`,
+        );
+        const result = await loadPoliciesFromToml([tempPolicyDir], () => 1);
+        expect(result.errors).toHaveLength(0);
+
+        const engine = new PolicyEngine({
+          rules: result.rules,
+        });
+
+        // "search" tool with a serverName should be ALLOWED
+        const withServer = await engine.check(
+          { name: 'search' },
+          'jira-server',
+        );
+        expect(
+          withServer.decision,
+          'search tool with serverName should be ALLOWED',
+        ).toBe(PolicyDecision.ALLOW);
+
+        // "search" tool without a serverName should also be ALLOWED
+        const withoutServer = await engine.check({ name: 'search' }, undefined);
+        expect(
+          withoutServer.decision,
+          'search tool without serverName should be ALLOWED',
+        ).toBe(PolicyDecision.ALLOW);
+
+        // A different tool should be DENIED by the catch-all
+        const otherTool = await engine.check(
+          { name: 'delete_all' },
+          'jira-server',
+        );
+        expect(otherTool.decision, 'non-search tool should be DENIED').toBe(
+          PolicyDecision.DENY,
+        );
       } finally {
         await fs.rm(tempPolicyDir, { recursive: true, force: true });
       }

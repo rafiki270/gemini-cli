@@ -370,9 +370,14 @@ export async function loadPoliciesFromToml(
 
               // Create a policy rule for each tool name
               return toolNames.map((toolName) => {
-                // Transform mcpName field to composite toolName format
+                // Transform mcpName field to composite toolName format.
+                // mcpName="*" is a global wildcard: it should not produce
+                // a composite "*__" prefix because composite patterns
+                // require a server context to match in the policy engine.
                 let effectiveToolName: string | undefined;
-                if (rule.mcpName && toolName) {
+                if (rule.mcpName === '*') {
+                  effectiveToolName = toolName ?? '*';
+                } else if (rule.mcpName && toolName) {
                   effectiveToolName = `${rule.mcpName}__${toolName}`;
                 } else if (rule.mcpName) {
                   effectiveToolName = `${rule.mcpName}__*`;
@@ -456,7 +461,9 @@ export async function loadPoliciesFromToml(
 
               return toolNames.map((toolName) => {
                 let effectiveToolName: string | undefined;
-                if (checker.mcpName && toolName) {
+                if (checker.mcpName === '*') {
+                  effectiveToolName = toolName ?? '*';
+                } else if (checker.mcpName && toolName) {
                   effectiveToolName = `${checker.mcpName}__${toolName}`;
                 } else if (checker.mcpName) {
                   effectiveToolName = `${checker.mcpName}__*`;
