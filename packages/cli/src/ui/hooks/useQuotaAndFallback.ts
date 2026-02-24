@@ -97,12 +97,7 @@ export function useQuotaAndFallback({
           message = messageLines.join('\n');
         }
       } else {
-        const messageLines = [
-          `We are currently experiencing high demand.`,
-          'We apologize and appreciate your patience.',
-          '/model to switch models.',
-        ];
-        message = messageLines.join('\n');
+        return null;
       }
 
       setModelSwitchedFromQuotaError(true);

@@ -272,63 +272,28 @@ export async function retryWithBackoff<T>(
         errorCode !== undefined && errorCode >= 500 && errorCode < 600;
 
       if (classifiedError instanceof RetryableQuotaError || is500) {
-        if (attempt >= maxAttempts) {
-          const errorMessage =
-            classifiedError instanceof Error ? classifiedError.message : '';
-          debugLogger.warn(
-            `Attempt ${attempt} failed${errorMessage ? `: ${errorMessage}` : ''}. Max attempts reached`,
-          );
-          if (onPersistent429) {
-            try {
-              const fallbackModel = await onPersistent429(
-                authType,
-                classifiedError,
-              );
-              if (fallbackModel) {
-                attempt = 0; // Reset attempts and retry with the new model.
-                currentDelay = initialDelayMs;
-                continue;
-              }
-            } catch (fallbackError) {
-              debugLogger.warn('Model fallback failed:', fallbackError);
-            }
-          }
-          throw classifiedError instanceof RetryableQuotaError
-            ? classifiedError
-            : error;
-        }
-
-        if (
-          classifiedError instanceof RetryableQuotaError &&
-          classifiedError.retryDelayMs !== undefined
-        ) {
-          currentDelay = Math.max(currentDelay, classifiedError.retryDelayMs);
-          // Positive jitter up to +20% while respecting server minimum delay
-          const jitter = currentDelay * 0.2 * Math.random();
-          const delayWithJitter = currentDelay + jitter;
-          debugLogger.warn(
-            `Attempt ${attempt} failed: ${classifiedError.message}. Retrying after ${Math.round(delayWithJitter)}ms...`,
-          );
-          if (onRetry) {
-            onRetry(attempt, error, delayWithJitter);
-          }
-          await delay(delayWithJitter, signal);
-          currentDelay = Math.min(maxDelayMs, currentDelay * 2);
-          continue;
+        // Custom schedule logic:
+        // - 1st-3rd retry: 5 seconds
+        // - 4th-6th retry: 10 seconds
+        // - 7th+ retry: 30 seconds
+        let delayMs: number;
+        if (attempt <= 3) {
+          delayMs = 5000;
+        } else if (attempt <= 6) {
+          delayMs = 10000;
         } else {
-          const errorStatus = getErrorStatus(error);
-          logRetryAttempt(attempt, error, errorStatus);
-
-          // Exponential backoff with jitter for non-quota errors
-          const jitter = currentDelay * 0.3 * (Math.random() * 2 - 1);
-          const delayWithJitter = Math.max(0, currentDelay + jitter);
-          if (onRetry) {
-            onRetry(attempt, error, delayWithJitter);
-          }
-          await delay(delayWithJitter, signal);
-          currentDelay = Math.min(maxDelayMs, currentDelay * 2);
-          continue;
+          delayMs = 30000;
         }
+
+        // We bypass the maxAttempts check for these errors to "keep trying" as requested.
+        const errorStatus = getErrorStatus(error);
+        logRetryAttempt(attempt, error, errorStatus);
+
+        if (onRetry) {
+          onRetry(attempt, error, delayMs);
+        }
+        await delay(delayMs, signal);
+        continue;
       }
 
       // Generic retry logic for other errors
