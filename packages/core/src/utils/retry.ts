@@ -15,6 +15,7 @@ import {
 import { delay, createAbortError } from './delay.js';
 import { debugLogger } from './debugLogger.js';
 import { getErrorStatus, ModelNotFoundError } from './httpErrors.js';
+import { writeToStderr } from './stdio.js';
 import type { RetryAvailabilityContext } from '../availability/modelPolicy.js';
 
 export type { RetryAvailabilityContext };
@@ -288,6 +289,9 @@ export async function retryWithBackoff<T>(
         // We bypass the maxAttempts check for these errors to "keep trying" as requested.
         const errorStatus = getErrorStatus(error);
         logRetryAttempt(attempt, error, errorStatus);
+
+        const visibleMessage = `[Attempt ${attempt}] High demand or server error. Retrying in ${delayMs / 1000}s...\n`;
+        writeToStderr(visibleMessage);
 
         if (onRetry) {
           onRetry(attempt, error, delayMs);

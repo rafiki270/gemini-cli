@@ -1,6 +1,6 @@
 {
   "name": "@unlikeotherai/gemini-cli",
-  "version": "0.30.0-no-bother-0.1",
+  "version": "0.30.0-no-bother-0.4",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
@@ -33,7 +33,7 @@
   },
   "dependencies": {
     "@agentclientprotocol/sdk": "^0.12.0",
-    "@unlikeotherai/gemini-cli-core": "file:../core",
+    "@unlikeotherai/gemini-cli-core": "0.30.0-no-bother-0.4",
     "@google/genai": "1.41.0",
     "@iarna/toml": "^2.2.5",
     "@modelcontextprotocol/sdk": "^1.23.0",
