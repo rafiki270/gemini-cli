@@ -7,7 +7,7 @@
 import { useReducer, useRef, useEffect, useCallback } from 'react';
 import { useKeypress, type Key } from './useKeypress.js';
 import { keyMatchers, Command } from '../keyMatchers.js';
-import { debugLogger } from '@google/gemini-cli-core';
+import { debugLogger } from '@unlikeotherai/gemini-cli-core';
 
 export interface SelectionListItem<T> {
   key: string;

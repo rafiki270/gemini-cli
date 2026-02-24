@@ -7,7 +7,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { renderHook } from '../../test-utils/render.js';
 import { useSessionRetentionCheck } from './useSessionRetentionCheck.js';
-import { type Config } from '@google/gemini-cli-core';
+import { type Config } from '@unlikeotherai/gemini-cli-core';
 import type { Settings } from '../../config/settingsSchema.js';
 import { waitFor } from '../../test-utils/async.js';
 

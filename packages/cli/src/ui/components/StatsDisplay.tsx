@@ -27,7 +27,7 @@ import {
   getDisplayString,
   isAutoModel,
   AuthType,
-} from '@google/gemini-cli-core';
+} from '@unlikeotherai/gemini-cli-core';
 import { useSettings } from '../contexts/SettingsContext.js';
 import { useConfig } from '../contexts/ConfigContext.js';
 import type { QuotaStats } from '../types.js';

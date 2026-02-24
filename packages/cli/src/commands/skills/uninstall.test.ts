@@ -12,11 +12,11 @@ vi.mock('../../utils/skillUtils.js', () => ({
   uninstallSkill: mockUninstallSkill,
 }));
 
-vi.mock('@google/gemini-cli-core', () => ({
+vi.mock('@unlikeotherai/gemini-cli-core', () => ({
   debugLogger: { log: vi.fn(), error: vi.fn() },
 }));
 
-import { debugLogger } from '@google/gemini-cli-core';
+import { debugLogger } from '@unlikeotherai/gemini-cli-core';
 import { handleUninstall, uninstallCommand } from './uninstall.js';
 
 describe('skill uninstall command', () => {

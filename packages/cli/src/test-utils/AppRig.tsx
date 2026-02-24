@@ -29,7 +29,7 @@ import {
   createContentGenerator,
   IdeClient,
   debugLogger,
-} from '@google/gemini-cli-core';
+} from '@unlikeotherai/gemini-cli-core';
 import {
   type MockShellCommand,
   MockShellExecutionService,
@@ -39,9 +39,9 @@ import { type LoadedSettings } from '../config/settings.js';
 import { AuthState } from '../ui/types.js';
 
 // Mock core functions globally for tests using AppRig.
-vi.mock('@google/gemini-cli-core', async (importOriginal) => {
+vi.mock('@unlikeotherai/gemini-cli-core', async (importOriginal) => {
   const original =
-    await importOriginal<typeof import('@google/gemini-cli-core')>();
+    await importOriginal<typeof import('@unlikeotherai/gemini-cli-core')>();
   const { MockShellExecutionService: MockService } = await import(
     './MockShellExecutionService.js'
   );
@@ -237,7 +237,7 @@ export class AppRig {
       gcConfig.contentGeneratorConfig = newContentGeneratorConfig;
 
       // Initialize BaseLlmClient now that the ContentGenerator is available
-      const { BaseLlmClient } = await import('@google/gemini-cli-core');
+      const { BaseLlmClient } = await import('@unlikeotherai/gemini-cli-core');
       gcConfig.baseLlmClient = new BaseLlmClient(
         gcConfig.contentGenerator,
         this.config!,

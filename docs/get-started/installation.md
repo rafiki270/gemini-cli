@@ -35,7 +35,7 @@ Note that Gemini CLI comes pre-installed on
 ### Install globally with npm
 
 ```bash
-npm install -g @google/gemini-cli
+npm install -g @unlikeotherai/gemini-cli
 ```
 
 ### Install globally with Homebrew (macOS/Linux)
@@ -58,7 +58,7 @@ conda create -y -n gemini_env -c conda-forge nodejs
 conda activate gemini_env
 
 # Install Gemini CLI globally via npm (inside the environment)
-npm install -g @google/gemini-cli
+npm install -g @unlikeotherai/gemini-cli
 ```
 
 ## Run Gemini CLI
@@ -82,7 +82,7 @@ You can also run Gemini CLI using one of the following advanced methods:
 
 ```bash
 # Using npx (no installation required)
-npx @google/gemini-cli
+npx @unlikeotherai/gemini-cli
 ```
 
 You can also execute the CLI directly from the main branch on GitHub, which is
@@ -148,8 +148,8 @@ by default:
 
 ```bash
 # Both commands install the latest stable release.
-npm install -g @google/gemini-cli
-npm install -g @google/gemini-cli@latest
+npm install -g @unlikeotherai/gemini-cli
+npm install -g @unlikeotherai/gemini-cli@latest
 ```
 
 ### Preview
@@ -159,7 +159,7 @@ vetted and may contain regressions or other outstanding issues. Try out the
 preview release by using the `preview` tag:
 
 ```bash
-npm install -g @google/gemini-cli@preview
+npm install -g @unlikeotherai/gemini-cli@preview
 ```
 
 ### Nightly
@@ -170,5 +170,5 @@ pending validations and issues. You can help test the latest changes by
 installing with the `nightly` tag:
 
 ```bash
-npm install -g @google/gemini-cli@nightly
+npm install -g @unlikeotherai/gemini-cli@nightly
 ```

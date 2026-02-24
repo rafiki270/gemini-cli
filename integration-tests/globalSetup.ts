@@ -13,7 +13,7 @@ import { mkdir, readdir, rm } from 'node:fs/promises';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { canUseRipgrep } from '../packages/core/src/tools/ripGrep.js';
-import { disableMouseTracking } from '@google/gemini-cli-core';
+import { disableMouseTracking } from '@unlikeotherai/gemini-cli-core';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const rootDir = join(__dirname, '..');

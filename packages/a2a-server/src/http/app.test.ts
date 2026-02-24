@@ -7,8 +7,8 @@
 import type {
   Config,
   ToolCallConfirmationDetails,
-} from '@google/gemini-cli-core';
-import { GeminiEventType, ApprovalMode } from '@google/gemini-cli-core';
+} from '@unlikeotherai/gemini-cli-core';
+import { GeminiEventType, ApprovalMode } from '@unlikeotherai/gemini-cli-core';
 import type {
   TaskStatusUpdateEvent,
   SendStreamingMessageSuccessResponse,
@@ -35,7 +35,7 @@ import {
   createMockConfig,
 } from '../utils/testing_utils.js';
 // Import MockTool from specific path to avoid vitest dependency in main core bundle
-import { MockTool } from '@google/gemini-cli-core/src/test-utils/mock-tool.js';
+import { MockTool } from '@unlikeotherai/gemini-cli-core/src/test-utils/mock-tool.js';
 import type { Command, CommandContext } from '../commands/types.js';
 
 const mockToolConfirmationFn = async () =>
@@ -88,8 +88,8 @@ vi.mock('../config/config.js', async () => {
 
 // Mock the GeminiClient to avoid actual API calls
 const sendMessageStreamSpy = vi.fn();
-vi.mock('@google/gemini-cli-core', async () => {
-  const actual = await vi.importActual('@google/gemini-cli-core');
+vi.mock('@unlikeotherai/gemini-cli-core', async () => {
+  const actual = await vi.importActual('@unlikeotherai/gemini-cli-core');
   return {
     ...actual,
     GeminiClient: vi.fn().mockImplementation(() => ({

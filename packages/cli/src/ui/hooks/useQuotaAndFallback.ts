@@ -17,7 +17,7 @@ import {
   VALID_GEMINI_MODELS,
   isProModel,
   getDisplayString,
-} from '@google/gemini-cli-core';
+} from '@unlikeotherai/gemini-cli-core';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { type UseHistoryManagerReturn } from './useHistoryManager.js';
 import { MessageType } from '../types.js';

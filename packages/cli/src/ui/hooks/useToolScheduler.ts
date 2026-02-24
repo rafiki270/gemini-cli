@@ -15,7 +15,7 @@ import {
   type EditorType,
   type ToolCallsUpdateMessage,
   CoreToolCallStatus,
-} from '@google/gemini-cli-core';
+} from '@unlikeotherai/gemini-cli-core';
 import { useCallback, useState, useMemo, useEffect, useRef } from 'react';
 
 // Re-exporting types compatible with hook expectations

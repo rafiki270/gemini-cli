@@ -22,9 +22,9 @@ import {
   type EditorType,
   isEditorAvailable,
   EDITOR_DISPLAY_NAMES,
-} from '@google/gemini-cli-core';
+} from '@unlikeotherai/gemini-cli-core';
 import { useKeypress } from '../hooks/useKeypress.js';
-import { coreEvents } from '@google/gemini-cli-core';
+import { coreEvents } from '@unlikeotherai/gemini-cli-core';
 
 interface EditorDialogProps {
   onSelect: (

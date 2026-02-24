@@ -5,7 +5,7 @@
  */
 
 import { useState, useEffect } from 'react';
-import { type Config } from '@google/gemini-cli-core';
+import { type Config } from '@unlikeotherai/gemini-cli-core';
 import { type Settings } from '../../config/settings.js';
 import { getAllSessionFiles } from '../../utils/sessionUtils.js';
 import { identifySessionsToDelete } from '../../utils/sessionCleanup.js';

@@ -20,13 +20,13 @@ import {
   type AnyToolInvocation,
   ROOT_SCHEDULER_ID,
   CoreToolCallStatus,
-} from '@google/gemini-cli-core';
-import { createMockMessageBus } from '@google/gemini-cli-core/src/test-utils/mock-message-bus.js';
+} from '@unlikeotherai/gemini-cli-core';
+import { createMockMessageBus } from '@unlikeotherai/gemini-cli-core/src/test-utils/mock-message-bus.js';
 
 // Mock Core Scheduler
-vi.mock('@google/gemini-cli-core', async (importOriginal) => {
+vi.mock('@unlikeotherai/gemini-cli-core', async (importOriginal) => {
   const actual =
-    await importOriginal<typeof import('@google/gemini-cli-core')>();
+    await importOriginal<typeof import('@unlikeotherai/gemini-cli-core')>();
   return {
     ...actual,
     Scheduler: vi.fn().mockImplementation(() => ({
@@ -274,7 +274,7 @@ describe('useToolScheduler', () => {
     };
 
     // Mock the specific return value for this test
-    const { Scheduler } = await import('@google/gemini-cli-core');
+    const { Scheduler } = await import('@unlikeotherai/gemini-cli-core');
     vi.mocked(Scheduler).mockImplementation(
       () =>
         ({

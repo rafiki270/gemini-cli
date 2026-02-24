@@ -21,7 +21,7 @@ import { XCode } from './xcode.js';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import type { Theme, ThemeType, ColorsTheme } from './theme.js';
-import type { CustomTheme } from '@google/gemini-cli-core';
+import type { CustomTheme } from '@unlikeotherai/gemini-cli-core';
 import { createCustomTheme, validateCustomTheme } from './theme.js';
 import type { SemanticColors } from './semantic-tokens.js';
 import {
@@ -34,7 +34,7 @@ import { ANSI } from './ansi.js';
 import { ANSILight } from './ansi-light.js';
 import { NoColorTheme } from './no-color.js';
 import process from 'node:process';
-import { debugLogger, homedir } from '@google/gemini-cli-core';
+import { debugLogger, homedir } from '@unlikeotherai/gemini-cli-core';
 
 export interface ThemeDisplay {
   name: string;

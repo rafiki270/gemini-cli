@@ -14,7 +14,7 @@ import {
   type Config,
   SHELL_TOOL_NAME,
   CoreToolCallStatus,
-} from '@google/gemini-cli-core';
+} from '@unlikeotherai/gemini-cli-core';
 import { renderWithProviders } from '../../../test-utils/render.js';
 import { waitFor } from '../../../test-utils/async.js';
 import { describe, it, expect, vi, beforeEach } from 'vitest';

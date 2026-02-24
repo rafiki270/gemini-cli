@@ -7,7 +7,10 @@
 import type { Mock } from 'vitest';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { handleAtCommand } from './atCommandProcessor.js';
-import type { Config, DiscoveredMCPResource } from '@google/gemini-cli-core';
+import type {
+  Config,
+  DiscoveredMCPResource,
+} from '@unlikeotherai/gemini-cli-core';
 import {
   FileDiscoveryService,
   GlobTool,
@@ -18,8 +21,8 @@ import {
   GEMINI_IGNORE_FILE_NAME,
   // DEFAULT_FILE_EXCLUDES,
   CoreToolCallStatus,
-} from '@google/gemini-cli-core';
-import * as core from '@google/gemini-cli-core';
+} from '@unlikeotherai/gemini-cli-core';
+import * as core from '@unlikeotherai/gemini-cli-core';
 import * as os from 'node:os';
 import type { UseHistoryManagerReturn } from './useHistoryManager.js';
 import * as fsPromises from 'node:fs/promises';

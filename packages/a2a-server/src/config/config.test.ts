@@ -16,12 +16,12 @@ import {
   ExperimentFlags,
   fetchAdminControlsOnce,
   type FetchAdminControlsResponse,
-} from '@google/gemini-cli-core';
+} from '@unlikeotherai/gemini-cli-core';
 
 // Mock dependencies
-vi.mock('@google/gemini-cli-core', async (importOriginal) => {
+vi.mock('@unlikeotherai/gemini-cli-core', async (importOriginal) => {
   const actual =
-    await importOriginal<typeof import('@google/gemini-cli-core')>();
+    await importOriginal<typeof import('@unlikeotherai/gemini-cli-core')>();
   return {
     ...actual,
     Config: vi.fn().mockImplementation((params) => {

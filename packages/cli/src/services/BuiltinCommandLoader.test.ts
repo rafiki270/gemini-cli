@@ -52,15 +52,15 @@ vi.mock('../ui/commands/permissionsCommand.js', async () => {
 
 import { describe, it, expect, vi, beforeEach, type Mock } from 'vitest';
 import { BuiltinCommandLoader } from './BuiltinCommandLoader.js';
-import type { Config } from '@google/gemini-cli-core';
-import { isNightly } from '@google/gemini-cli-core';
+import type { Config } from '@unlikeotherai/gemini-cli-core';
+import { isNightly } from '@unlikeotherai/gemini-cli-core';
 import { CommandKind } from '../ui/commands/types.js';
 
 import { restoreCommand } from '../ui/commands/restoreCommand.js';
 
-vi.mock('@google/gemini-cli-core', async (importOriginal) => {
+vi.mock('@unlikeotherai/gemini-cli-core', async (importOriginal) => {
   const actual =
-    await importOriginal<typeof import('@google/gemini-cli-core')>();
+    await importOriginal<typeof import('@unlikeotherai/gemini-cli-core')>();
   return {
     ...actual,
     isNightly: vi.fn().mockResolvedValue(false),

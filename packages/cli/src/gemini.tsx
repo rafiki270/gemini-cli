@@ -71,7 +71,7 @@ import {
   ValidationCancelledError,
   ValidationRequiredError,
   type AdminControlsSettings,
-} from '@google/gemini-cli-core';
+} from '@unlikeotherai/gemini-cli-core';
 import {
   initializeApp,
   type InitializationResult,

@@ -11,11 +11,11 @@ if (process.env['NO_COLOR'] !== undefined) {
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { themeManager, DEFAULT_THEME } from './theme-manager.js';
-import type { CustomTheme } from '@google/gemini-cli-core';
+import type { CustomTheme } from '@unlikeotherai/gemini-cli-core';
 import * as fs from 'node:fs';
 import * as os from 'node:os';
 import type * as osActual from 'node:os';
-import { debugLogger } from '@google/gemini-cli-core';
+import { debugLogger } from '@unlikeotherai/gemini-cli-core';
 
 vi.mock('node:fs');
 vi.mock('node:os', async (importOriginal) => {
@@ -27,9 +27,9 @@ vi.mock('node:os', async (importOriginal) => {
   };
 });
 
-vi.mock('@google/gemini-cli-core', async (importOriginal) => {
+vi.mock('@unlikeotherai/gemini-cli-core', async (importOriginal) => {
   const actual =
-    await importOriginal<typeof import('@google/gemini-cli-core')>();
+    await importOriginal<typeof import('@unlikeotherai/gemini-cli-core')>();
   return {
     ...actual,
     homedir: () => os.homedir(),

@@ -19,11 +19,11 @@ vi.mock('../../config/extensions/consent.js', () => ({
   skillsConsentString: mockSkillsConsentString,
 }));
 
-vi.mock('@google/gemini-cli-core', () => ({
+vi.mock('@unlikeotherai/gemini-cli-core', () => ({
   debugLogger: { log: vi.fn(), error: vi.fn() },
 }));
 
-import { debugLogger } from '@google/gemini-cli-core';
+import { debugLogger } from '@unlikeotherai/gemini-cli-core';
 import { handleInstall, installCommand } from './install.js';
 
 describe('skill install command', () => {

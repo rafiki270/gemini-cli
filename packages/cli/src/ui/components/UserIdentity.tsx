@@ -12,7 +12,7 @@ import {
   type Config,
   UserAccountManager,
   AuthType,
-} from '@google/gemini-cli-core';
+} from '@unlikeotherai/gemini-cli-core';
 
 interface UserIdentityProps {
   config: Config;

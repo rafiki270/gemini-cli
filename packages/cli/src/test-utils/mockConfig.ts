@@ -5,7 +5,7 @@
  */
 
 import { vi } from 'vitest';
-import type { Config } from '@google/gemini-cli-core';
+import type { Config } from '@unlikeotherai/gemini-cli-core';
 import type { LoadedSettings, Settings } from '../config/settings.js';
 import { createTestMergedSettings } from '../config/settings.js';
 

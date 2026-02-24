@@ -10,7 +10,7 @@ import { renderWithProviders } from '../../../test-utils/render.js';
 import { StreamingState, type IndividualToolCallDisplay } from '../../types.js';
 import { OverflowProvider } from '../../contexts/OverflowContext.js';
 import { waitFor } from '../../../test-utils/async.js';
-import { CoreToolCallStatus } from '@google/gemini-cli-core';
+import { CoreToolCallStatus } from '@unlikeotherai/gemini-cli-core';
 
 describe('ToolOverflowConsistencyChecks: ToolGroupMessage and ToolResultDisplay synchronization', () => {
   it('should ensure explicit hasOverflow calculation is consistent with ToolResultDisplay truncation in Alternate Buffer (ASB) mode', async () => {

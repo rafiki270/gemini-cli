@@ -16,7 +16,7 @@ import type {
   Logger,
   CommandActionReturn,
   AgentDefinition,
-} from '@google/gemini-cli-core';
+} from '@unlikeotherai/gemini-cli-core';
 import type { LoadedSettings } from '../../config/settings.js';
 import type { UseHistoryManagerReturn } from '../hooks/useHistoryManager.js';
 import type { SessionStatsState } from '../contexts/SessionContext.js';

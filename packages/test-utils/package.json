@@ -1,5 +1,5 @@
 {
-  "name": "@google/gemini-cli-test-utils",
+  "name": "@unlikeotherai/gemini-cli-test-utils",
   "version": "0.30.0-nightly.20260210.a2174751d",
   "private": true,
   "main": "src/index.ts",
@@ -10,7 +10,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@google/gemini-cli-core": "file:../core",
+    "@unlikeotherai/gemini-cli-core": "file:../core",
     "@lydell/node-pty": "1.1.0",
     "strip-ansi": "^7.1.2",
     "vitest": "^3.2.4"

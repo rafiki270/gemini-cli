@@ -15,7 +15,7 @@ editing documents.
 The standard method to install and run Gemini CLI uses `npm`:
 
 ```bash
-npm install -g @google/gemini-cli
+npm install -g @unlikeotherai/gemini-cli
 ```
 
 Once Gemini CLI is installed, run Gemini CLI from your command line:

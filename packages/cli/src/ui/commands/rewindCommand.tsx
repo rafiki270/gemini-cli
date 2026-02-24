@@ -24,7 +24,7 @@ import {
   type ChatRecordingService,
   type GeminiClient,
   convertSessionToClientHistory,
-} from '@google/gemini-cli-core';
+} from '@unlikeotherai/gemini-cli-core';
 
 /**
  * Helper function to handle the core logic of rewinding a conversation.

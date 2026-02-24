@@ -13,7 +13,7 @@ import {
   type ToolInvocation,
   Kind,
   type MessageBus,
-} from '@google/gemini-cli-core';
+} from '@unlikeotherai/gemini-cli-core';
 import type { SessionContext } from './types.js';
 
 export { z };

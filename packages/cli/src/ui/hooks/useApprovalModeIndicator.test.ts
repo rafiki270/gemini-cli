@@ -17,16 +17,18 @@ import { act } from 'react';
 import { renderHook } from '../../test-utils/render.js';
 import { useApprovalModeIndicator } from './useApprovalModeIndicator.js';
 
-import { Config, ApprovalMode } from '@google/gemini-cli-core';
-import type { Config as ActualConfigType } from '@google/gemini-cli-core';
+import { Config, ApprovalMode } from '@unlikeotherai/gemini-cli-core';
+import type { Config as ActualConfigType } from '@unlikeotherai/gemini-cli-core';
 import type { Key } from './useKeypress.js';
 import { useKeypress } from './useKeypress.js';
 import { MessageType } from '../types.js';
 
 vi.mock('./useKeypress.js');
 
-vi.mock('@google/gemini-cli-core', async () => {
-  const actualServerModule = await vi.importActual('@google/gemini-cli-core');
+vi.mock('@unlikeotherai/gemini-cli-core', async () => {
+  const actualServerModule = await vi.importActual(
+    '@unlikeotherai/gemini-cli-core',
+  );
   return {
     ...actualServerModule,
     Config: vi.fn(),

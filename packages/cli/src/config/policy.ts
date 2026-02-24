@@ -17,7 +17,7 @@ import {
   Storage,
   type PolicyUpdateConfirmationRequest,
   writeToStderr,
-} from '@google/gemini-cli-core';
+} from '@unlikeotherai/gemini-cli-core';
 import { type Settings } from './settings.js';
 
 export async function createPolicyEngineConfig(

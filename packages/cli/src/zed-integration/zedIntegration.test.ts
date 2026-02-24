@@ -26,7 +26,7 @@ import {
   type Config,
   type MessageBus,
   LlmRole,
-} from '@google/gemini-cli-core';
+} from '@unlikeotherai/gemini-cli-core';
 import {
   SettingScope,
   type LoadedSettings,
@@ -35,7 +35,7 @@ import {
 import { loadCliConfig, type CliArgs } from '../config/config.js';
 import * as fs from 'node:fs/promises';
 import * as path from 'node:path';
-import { ApprovalMode } from '@google/gemini-cli-core/src/policy/types.js';
+import { ApprovalMode } from '@unlikeotherai/gemini-cli-core/src/policy/types.js';
 
 vi.mock('../config/config.js', () => ({
   loadCliConfig: vi.fn(),
@@ -64,9 +64,11 @@ vi.mock('node:path', async (importOriginal) => {
 
 // Mock ReadManyFilesTool
 vi.mock(
-  '@google/gemini-cli-core',
+  '@unlikeotherai/gemini-cli-core',
   async (
-    importOriginal: () => Promise<typeof import('@google/gemini-cli-core')>,
+    importOriginal: () => Promise<
+      typeof import('@unlikeotherai/gemini-cli-core')
+    >,
   ) => {
     const actual = await importOriginal();
     return {

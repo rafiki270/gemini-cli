@@ -14,7 +14,7 @@ import {
   getThemeTypeFromBackgroundColor,
 } from './color-utils.js';
 
-import type { CustomTheme } from '@google/gemini-cli-core';
+import type { CustomTheme } from '@unlikeotherai/gemini-cli-core';
 import { DEFAULT_BORDER_OPACITY } from '../constants.js';
 
 export type { CustomTheme };

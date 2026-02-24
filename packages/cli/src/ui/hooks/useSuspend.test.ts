@@ -24,14 +24,14 @@ import {
   exitAlternateScreen,
   enableLineWrapping,
   disableLineWrapping,
-} from '@google/gemini-cli-core';
+} from '@unlikeotherai/gemini-cli-core';
 import {
   cleanupTerminalOnExit,
   terminalCapabilityManager,
 } from '../utils/terminalCapabilityManager.js';
 
-vi.mock('@google/gemini-cli-core', async () => {
-  const actual = await vi.importActual('@google/gemini-cli-core');
+vi.mock('@unlikeotherai/gemini-cli-core', async () => {
+  const actual = await vi.importActual('@unlikeotherai/gemini-cli-core');
   return {
     ...actual,
     writeToStdout: vi.fn(),

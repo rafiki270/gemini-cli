@@ -15,7 +15,7 @@ vi.mock('../../utils/skillUtils.js', () => ({
   linkSkill: mockLinkSkill,
 }));
 
-vi.mock('@google/gemini-cli-core', () => ({
+vi.mock('@unlikeotherai/gemini-cli-core', () => ({
   debugLogger: { log: vi.fn(), error: vi.fn() },
 }));
 
@@ -24,7 +24,7 @@ vi.mock('../../config/extensions/consent.js', () => ({
   skillsConsentString: mockSkillsConsentString,
 }));
 
-import { debugLogger } from '@google/gemini-cli-core';
+import { debugLogger } from '@unlikeotherai/gemini-cli-core';
 
 describe('skills link command', () => {
   beforeEach(() => {

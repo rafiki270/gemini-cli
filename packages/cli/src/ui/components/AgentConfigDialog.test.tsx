@@ -11,7 +11,7 @@ import { act } from 'react';
 import { AgentConfigDialog } from './AgentConfigDialog.js';
 import { LoadedSettings, SettingScope } from '../../config/settings.js';
 import { KeypressProvider } from '../contexts/KeypressContext.js';
-import type { AgentDefinition } from '@google/gemini-cli-core';
+import type { AgentDefinition } from '@unlikeotherai/gemini-cli-core';
 
 vi.mock('../contexts/UIStateContext.js', () => ({
   useUIState: () => ({

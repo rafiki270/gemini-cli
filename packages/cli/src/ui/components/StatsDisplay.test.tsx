@@ -12,7 +12,7 @@ import type { SessionMetrics } from '../contexts/SessionContext.js';
 import {
   ToolCallDecision,
   type RetrieveUserQuotaResponse,
-} from '@google/gemini-cli-core';
+} from '@unlikeotherai/gemini-cli-core';
 
 // Mock the context to provide controlled data for testing
 vi.mock('../contexts/SessionContext.js', async (importOriginal) => {

@@ -8,7 +8,7 @@ import {
   debugLogger,
   listExtensions,
   type ExtensionInstallMetadata,
-} from '@google/gemini-cli-core';
+} from '@unlikeotherai/gemini-cli-core';
 import type { ExtensionUpdateInfo } from '../../config/extension.js';
 import { getErrorMessage } from '../../utils/errors.js';
 import {

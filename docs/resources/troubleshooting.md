@@ -75,7 +75,7 @@ topics on:
   - **Solution:** The update depends on how you installed Gemini CLI:
     - If you installed `gemini` globally, check that your `npm` global binary
       directory is in your `PATH`. You can update Gemini CLI using the command
-      `npm install -g @google/gemini-cli@latest`.
+      `npm install -g @unlikeotherai/gemini-cli@latest`.
     - If you are running `gemini` from source, ensure you are using the correct
       command to invoke it (e.g., `node packages/cli/dist/index.js ...`). To
       update Gemini CLI, pull the latest changes from the repository, and then

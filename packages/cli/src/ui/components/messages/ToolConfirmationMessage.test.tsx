@@ -10,7 +10,7 @@ import type {
   SerializableConfirmationDetails,
   ToolCallConfirmationDetails,
   Config,
-} from '@google/gemini-cli-core';
+} from '@unlikeotherai/gemini-cli-core';
 import { renderWithProviders } from '../../../test-utils/render.js';
 import { createMockSettings } from '../../../test-utils/settings.js';
 import { useToolActions } from '../../contexts/ToolActionsContext.js';

@@ -8,12 +8,15 @@ import { act, useCallback } from 'react';
 import { vi } from 'vitest';
 import { render } from '../../test-utils/render.js';
 import { useConsoleMessages } from './useConsoleMessages.js';
-import { CoreEvent, type ConsoleLogPayload } from '@google/gemini-cli-core';
+import {
+  CoreEvent,
+  type ConsoleLogPayload,
+} from '@unlikeotherai/gemini-cli-core';
 
 // Mock coreEvents
 let consoleLogHandler: ((payload: ConsoleLogPayload) => void) | undefined;
 
-vi.mock('@google/gemini-cli-core', async (importOriginal) => {
+vi.mock('@unlikeotherai/gemini-cli-core', async (importOriginal) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const actual = (await importOriginal()) as any;
   return {

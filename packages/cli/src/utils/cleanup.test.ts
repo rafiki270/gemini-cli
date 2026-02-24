@@ -8,7 +8,7 @@ import { vi, describe, it, expect, beforeEach } from 'vitest';
 import { promises as fs } from 'node:fs';
 import * as path from 'node:path';
 
-vi.mock('@google/gemini-cli-core', () => ({
+vi.mock('@unlikeotherai/gemini-cli-core', () => ({
   Storage: vi.fn().mockImplementation(() => ({
     getProjectTempDir: vi.fn().mockReturnValue('/tmp/project'),
     initialize: vi.fn().mockResolvedValue(undefined),

@@ -12,7 +12,7 @@ import type {
   TelemetryTarget,
   ConfigParameters,
   ExtensionLoader,
-} from '@google/gemini-cli-core';
+} from '@unlikeotherai/gemini-cli-core';
 import {
   AuthType,
   Config,
@@ -28,7 +28,7 @@ import {
   fetchAdminControlsOnce,
   getCodeAssistServer,
   ExperimentFlags,
-} from '@google/gemini-cli-core';
+} from '@unlikeotherai/gemini-cli-core';
 
 import { logger } from '../utils/logger.js';
 import type { Settings } from './settings.js';

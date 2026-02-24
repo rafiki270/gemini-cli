@@ -10,7 +10,7 @@ import { LoginWithGoogleRestartDialog } from './LoginWithGoogleRestartDialog.js'
 import { useKeypress } from '../hooks/useKeypress.js';
 import { runExitCleanup } from '../../utils/cleanup.js';
 import { RELAUNCH_EXIT_CODE } from '../../utils/processUtils.js';
-import { type Config } from '@google/gemini-cli-core';
+import { type Config } from '@unlikeotherai/gemini-cli-core';
 
 // Mocks
 vi.mock('../hooks/useKeypress.js', () => ({

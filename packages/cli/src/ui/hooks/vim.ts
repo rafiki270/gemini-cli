@@ -8,7 +8,7 @@ import { useCallback, useReducer, useEffect, useRef } from 'react';
 import type { Key } from './useKeypress.js';
 import type { TextBuffer } from '../components/shared/text-buffer.js';
 import { useVimMode } from '../contexts/VimModeContext.js';
-import { debugLogger } from '@google/gemini-cli-core';
+import { debugLogger } from '@unlikeotherai/gemini-cli-core';
 import { keyMatchers, Command } from '../keyMatchers.js';
 
 export type VimMode = 'NORMAL' | 'INSERT';

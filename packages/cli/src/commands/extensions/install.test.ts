@@ -16,7 +16,10 @@ import {
 } from 'vitest';
 import { handleInstall, installCommand } from './install.js';
 import yargs from 'yargs';
-import { debugLogger, type GeminiCLIExtension } from '@google/gemini-cli-core';
+import {
+  debugLogger,
+  type GeminiCLIExtension,
+} from '@unlikeotherai/gemini-cli-core';
 import type {
   ExtensionManager,
   inferInstallMetadata,

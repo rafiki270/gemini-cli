@@ -7,7 +7,7 @@
 import React from 'react';
 import { Text } from 'ink';
 import { theme } from '../semantic-colors.js';
-import { debugLogger } from '@google/gemini-cli-core';
+import { debugLogger } from '@unlikeotherai/gemini-cli-core';
 import { stripUnsafeCharacters } from './textUtils.js';
 
 // Constants for Markdown parsing

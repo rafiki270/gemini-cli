@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { debugLogger, isGitRepository } from '@google/gemini-cli-core';
+import { debugLogger, isGitRepository } from '@unlikeotherai/gemini-cli-core';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import * as childProcess from 'node:child_process';
@@ -110,7 +110,7 @@ export function getInstallationInfo(
       realPath.includes('/.pnpm/global') ||
       realPath.includes('/.local/share/pnpm')
     ) {
-      const updateCommand = 'pnpm add -g @google/gemini-cli@latest';
+      const updateCommand = 'pnpm add -g @unlikeotherai/gemini-cli@latest';
       return {
         packageManager: PackageManager.PNPM,
         isGlobal: true,
@@ -123,7 +123,7 @@ export function getInstallationInfo(
 
     // Check for yarn
     if (realPath.includes('/.yarn/global')) {
-      const updateCommand = 'yarn global add @google/gemini-cli@latest';
+      const updateCommand = 'yarn global add @unlikeotherai/gemini-cli@latest';
       return {
         packageManager: PackageManager.YARN,
         isGlobal: true,
@@ -143,7 +143,7 @@ export function getInstallationInfo(
       };
     }
     if (realPath.includes('/.bun/install/global')) {
-      const updateCommand = 'bun add -g @google/gemini-cli@latest';
+      const updateCommand = 'bun add -g @unlikeotherai/gemini-cli@latest';
       return {
         packageManager: PackageManager.BUN,
         isGlobal: true,
@@ -176,7 +176,7 @@ export function getInstallationInfo(
     }
 
     // Assume global npm
-    const updateCommand = 'npm install -g @google/gemini-cli@latest';
+    const updateCommand = 'npm install -g @unlikeotherai/gemini-cli@latest';
     return {
       packageManager: PackageManager.NPM,
       isGlobal: true,

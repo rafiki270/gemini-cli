@@ -16,12 +16,12 @@ import {
   validatePlanContent,
   processSingleFileContent,
   type FileSystemService,
-} from '@google/gemini-cli-core';
+} from '@unlikeotherai/gemini-cli-core';
 import * as fs from 'node:fs';
 
-vi.mock('@google/gemini-cli-core', async (importOriginal) => {
+vi.mock('@unlikeotherai/gemini-cli-core', async (importOriginal) => {
   const actual =
-    await importOriginal<typeof import('@google/gemini-cli-core')>();
+    await importOriginal<typeof import('@unlikeotherai/gemini-cli-core')>();
   return {
     ...actual,
     validatePlanPath: vi.fn(async () => null),
@@ -160,7 +160,7 @@ Implement a comprehensive authentication system with multiple providers.
             readTextFile: vi.fn(),
             writeTextFile: vi.fn(),
           }),
-        } as unknown as import('@google/gemini-cli-core').Config,
+        } as unknown as import('@unlikeotherai/gemini-cli-core').Config,
       },
     );
 
@@ -435,7 +435,7 @@ Implement a comprehensive authentication system with multiple providers.
                 readTextFile: vi.fn(),
                 writeTextFile: vi.fn(),
               }),
-            } as unknown as import('@google/gemini-cli-core').Config,
+            } as unknown as import('@unlikeotherai/gemini-cli-core').Config,
           },
         );
 

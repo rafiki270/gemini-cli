@@ -9,12 +9,12 @@ import * as fs from 'node:fs';
 import * as path from 'node:path';
 import * as os from 'node:os';
 import { resolveWorkspacePolicyState } from './policy.js';
-import { writeToStderr } from '@google/gemini-cli-core';
+import { writeToStderr } from '@unlikeotherai/gemini-cli-core';
 
 // Mock debugLogger to avoid noise in test output
-vi.mock('@google/gemini-cli-core', async (importOriginal) => {
+vi.mock('@unlikeotherai/gemini-cli-core', async (importOriginal) => {
   const actual =
-    await importOriginal<typeof import('@google/gemini-cli-core')>();
+    await importOriginal<typeof import('@unlikeotherai/gemini-cli-core')>();
   return {
     ...actual,
     debugLogger: {
@@ -77,7 +77,9 @@ describe('resolveWorkspacePolicyState', () => {
     expect(firstResult.policyUpdateConfirmationRequest).toBeDefined();
 
     // Establish integrity manually as if accepted
-    const { PolicyIntegrityManager } = await import('@google/gemini-cli-core');
+    const { PolicyIntegrityManager } = await import(
+      '@unlikeotherai/gemini-cli-core'
+    );
     const integrityManager = new PolicyIntegrityManager();
     await integrityManager.acceptIntegrity(
       'workspace',

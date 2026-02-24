@@ -9,7 +9,10 @@ import { ToolMessage, type ToolMessageProps } from './ToolMessage.js';
 import { describe, it, expect, vi } from 'vitest';
 import { StreamingState } from '../../types.js';
 import { Text } from 'ink';
-import { type AnsiOutput, CoreToolCallStatus } from '@google/gemini-cli-core';
+import {
+  type AnsiOutput,
+  CoreToolCallStatus,
+} from '@unlikeotherai/gemini-cli-core';
 import { renderWithProviders } from '../../../test-utils/render.js';
 import { tryParseJSON } from '../../../utils/jsonoutput.js';
 

@@ -11,8 +11,8 @@ import {
   type Config,
   loadApiKey,
   debugLogger,
-} from '@google/gemini-cli-core';
-import { getErrorMessage } from '@google/gemini-cli-core';
+} from '@unlikeotherai/gemini-cli-core';
+import { getErrorMessage } from '@unlikeotherai/gemini-cli-core';
 import { AuthState } from '../types.js';
 import { validateAuthMethod } from '../../config/auth.js';
 

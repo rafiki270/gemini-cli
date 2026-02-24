@@ -1,5 +1,5 @@
 {
-  "name": "@google/gemini-cli-devtools",
+  "name": "@unlikeotherai/gemini-cli-devtools",
   "version": "0.30.0-nightly.20260210.a2174751d",
   "license": "Apache-2.0",
   "type": "module",

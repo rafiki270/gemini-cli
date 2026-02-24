@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { fetchWithTimeout } from '@google/gemini-cli-core';
+import { fetchWithTimeout } from '@unlikeotherai/gemini-cli-core';
 import { AsyncFzf } from 'fzf';
 
 export interface RegistryExtension {

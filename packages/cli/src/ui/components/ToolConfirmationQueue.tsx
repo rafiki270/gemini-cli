@@ -16,7 +16,7 @@ import { OverflowProvider } from '../contexts/OverflowContext.js';
 import { ShowMoreLines } from './ShowMoreLines.js';
 import { StickyHeader } from './StickyHeader.js';
 import { useAlternateBuffer } from '../hooks/useAlternateBuffer.js';
-import type { SerializableConfirmationDetails } from '@google/gemini-cli-core';
+import type { SerializableConfirmationDetails } from '@unlikeotherai/gemini-cli-core';
 
 function getConfirmationHeader(
   details: SerializableConfirmationDetails | undefined,

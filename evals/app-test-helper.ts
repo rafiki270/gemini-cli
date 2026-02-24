@@ -13,7 +13,7 @@ import {
 } from './test-helper.js';
 import fs from 'node:fs';
 import path from 'node:path';
-import { DEFAULT_GEMINI_MODEL } from '@google/gemini-cli-core';
+import { DEFAULT_GEMINI_MODEL } from '@unlikeotherai/gemini-cli-core';
 
 export interface AppEvalCase {
   name: string;

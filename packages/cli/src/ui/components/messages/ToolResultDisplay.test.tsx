@@ -7,7 +7,7 @@
 import { renderWithProviders } from '../../../test-utils/render.js';
 import { ToolResultDisplay } from './ToolResultDisplay.js';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import type { AnsiOutput } from '@google/gemini-cli-core';
+import type { AnsiOutput } from '@unlikeotherai/gemini-cli-core';
 
 // Mock UIStateContext partially
 const mockUseUIState = vi.fn();

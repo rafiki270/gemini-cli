@@ -24,7 +24,7 @@ import type { ToolMessageProps } from './ToolMessage.js';
 import { ACTIVE_SHELL_MAX_LINES } from '../../constants.js';
 import { useAlternateBuffer } from '../../hooks/useAlternateBuffer.js';
 import { useUIState } from '../../contexts/UIStateContext.js';
-import { type Config } from '@google/gemini-cli-core';
+import { type Config } from '@unlikeotherai/gemini-cli-core';
 import { calculateShellMaxLines } from '../../utils/toolLayoutUtils.js';
 
 export interface ShellToolMessageProps extends ToolMessageProps {

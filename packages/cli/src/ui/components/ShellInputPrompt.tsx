@@ -7,7 +7,7 @@
 import { useCallback } from 'react';
 import type React from 'react';
 import { useKeypress } from '../hooks/useKeypress.js';
-import { ShellExecutionService } from '@google/gemini-cli-core';
+import { ShellExecutionService } from '@unlikeotherai/gemini-cli-core';
 import { keyToAnsi, type Key } from '../hooks/keyToAnsi.js';
 import { ACTIVE_SHELL_MAX_LINES } from '../constants.js';
 import { Command, keyMatchers } from '../keyMatchers.js';

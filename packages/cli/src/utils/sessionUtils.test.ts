@@ -12,8 +12,8 @@ import {
   hasUserOrAssistantMessage,
   SessionError,
 } from './sessionUtils.js';
-import type { Config, MessageRecord } from '@google/gemini-cli-core';
-import { SESSION_FILE_PREFIX } from '@google/gemini-cli-core';
+import type { Config, MessageRecord } from '@unlikeotherai/gemini-cli-core';
+import { SESSION_FILE_PREFIX } from '@unlikeotherai/gemini-cli-core';
 import * as fs from 'node:fs/promises';
 import path from 'node:path';
 import { randomUUID } from 'node:crypto';

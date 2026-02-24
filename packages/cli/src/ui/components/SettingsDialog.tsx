@@ -37,8 +37,8 @@ import {
   type SettingsValue,
   TOGGLE_TYPES,
 } from '../../config/settingsSchema.js';
-import { coreEvents, debugLogger } from '@google/gemini-cli-core';
-import type { Config } from '@google/gemini-cli-core';
+import { coreEvents, debugLogger } from '@unlikeotherai/gemini-cli-core';
+import type { Config } from '@unlikeotherai/gemini-cli-core';
 
 import { useSearchBuffer } from '../hooks/useSearchBuffer.js';
 import {

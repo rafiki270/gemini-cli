@@ -18,7 +18,7 @@ import {
   type AuthType,
   type AgentOverride,
   type CustomTheme,
-} from '@google/gemini-cli-core';
+} from '@unlikeotherai/gemini-cli-core';
 import type { SessionRetentionSettings } from './settings.js';
 import { DEFAULT_MIN_RETENTION } from '../utils/sessionCleanup.js';
 

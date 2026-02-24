@@ -10,7 +10,7 @@ import {
 } from '../../test-utils/render.js';
 import { AppHeader } from './AppHeader.js';
 import { describe, it, expect, vi } from 'vitest';
-import { makeFakeConfig } from '@google/gemini-cli-core';
+import { makeFakeConfig } from '@unlikeotherai/gemini-cli-core';
 import crypto from 'node:crypto';
 
 vi.mock('../utils/terminalSetup.js', () => ({

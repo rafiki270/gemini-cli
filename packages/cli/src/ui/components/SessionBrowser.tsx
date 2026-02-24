@@ -11,7 +11,7 @@ import { Colors } from '../colors.js';
 import { useTerminalSize } from '../hooks/useTerminalSize.js';
 import { useKeypress } from '../hooks/useKeypress.js';
 import path from 'node:path';
-import type { Config } from '@google/gemini-cli-core';
+import type { Config } from '@unlikeotherai/gemini-cli-core';
 import type { SessionInfo, TextMatch } from '../../utils/sessionUtils.js';
 import {
   cleanMessage,

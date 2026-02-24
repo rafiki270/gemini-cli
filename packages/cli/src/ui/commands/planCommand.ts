@@ -11,7 +11,7 @@ import {
   debugLogger,
   processSingleFileContent,
   partToString,
-} from '@google/gemini-cli-core';
+} from '@unlikeotherai/gemini-cli-core';
 import { MessageType } from '../types.js';
 import * as path from 'node:path';
 

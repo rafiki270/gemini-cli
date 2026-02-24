@@ -23,7 +23,7 @@ import {
   EDIT_DISPLAY_NAME,
   READ_FILE_DISPLAY_NAME,
   GLOB_DISPLAY_NAME,
-} from '@google/gemini-cli-core';
+} from '@unlikeotherai/gemini-cli-core';
 import os from 'node:os';
 
 describe('<ToolGroupMessage />', () => {
