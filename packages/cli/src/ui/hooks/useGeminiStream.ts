@@ -1057,11 +1057,13 @@ export const useGeminiStream = (
       eventValue: ServerGeminiChatCompressedEvent['value'],
       userMessageTimestamp: number,
     ) => {
+      // Reset the force flag so Confucius can trigger again before the NEXT compression cycle
+      hasForcedConfuciusRef.current = false;
+
       if (pendingHistoryItemRef.current) {
         addItem(pendingHistoryItemRef.current, userMessageTimestamp);
         setPendingHistoryItem(null);
       }
-
       const isArchived =
         eventValue?.compressionStatus === CompressionStatus.ARCHIVED;
       const archivePath = eventValue?.archivePath;
@@ -1388,10 +1390,6 @@ export const useGeminiStream = (
               .getLastPromptTokenCount();
             const threshold = (await config.getCompressionThreshold()) ?? 0.8;
             const limit = tokenLimit(config.getActiveModel());
-
-            if (currentTokens < limit * threshold * 0.9) {
-              hasForcedConfuciusRef.current = false;
-            }
 
             if (
               currentTokens >= limit * threshold * 0.9 &&

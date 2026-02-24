@@ -603,7 +603,7 @@ export async function loadCliConfig(
   let fileCount = 0;
   let filePaths: string[] = [];
 
-  if (!experimentalJitContext && !sisyphusMode?.enabled) {
+  if (!experimentalJitContext) {
     // Call the (now wrapper) loadHierarchicalGeminiMemory which calls the server's version
     const result = await loadServerHierarchicalMemory(
       cwd,
