@@ -11,6 +11,7 @@ import { relaunchApp } from '../../utils/processUtils.js';
 import { GEMINI_DIR, DEFAULT_CONTEXT_FILENAME } from '@google/gemini-cli-core';
 import * as fs from 'node:fs/promises';
 import * as path from 'node:path';
+import { execSync } from 'node:child_process';
 import { useTextBuffer } from './shared/text-buffer.js';
 import { TextInput } from './shared/TextInput.js';
 
@@ -134,6 +135,17 @@ export const ForeverModeOnboardingDialog = ({
           firstStepsBuffer.text.trim(),
           'utf-8',
         );
+      }
+
+      try {
+        execSync('git init', { cwd: geminiDir, stdio: 'ignore' });
+        execSync('git add .', { cwd: geminiDir, stdio: 'ignore' });
+        execSync('git commit -m "chore(memory): initialize gemini memory"', {
+          cwd: geminiDir,
+          stdio: 'ignore',
+        });
+      } catch (_e) {
+        // Ignore git errors if git is not installed or user has no git config
       }
 
       onComplete(); // Before relaunch

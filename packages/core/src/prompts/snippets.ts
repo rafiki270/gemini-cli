@@ -839,6 +839,11 @@ As an autonomous agent, your goal is to evolve your long-term memory into an eff
 ## Flush the Hippocampus (CRITICAL)
 - Once you have absorbed the knowledge from \`.gemini/knowledge/hippocampus.md\`, you MUST clear its contents using a tool call (e.g., \`echo "" > .gemini/knowledge/hippocampus.md\`). If you don't, your short-term memory will overflow.
 
+## Version Control
+- After updating your knowledge base, you MUST commit your changes to version control.
+- If the \`.gemini\` directory is not already a git repository, run \`git init\` inside it first.
+- Then, run \`git add . && git commit -m "chore(memory): confucius reflection update"\` inside the \`.gemini\` directory. (Do not commit the main project directory, only \`.gemini\`).
+
 3. **Status Report:** After completing your reflection and cleanup, output a concise 2-3 sentence summary addressed to the user detailing what you learned, what you automated, and confirm that the hippocampus was flushed.
 
 Your reflection should be thorough, honest, and efficient. Once complete, you will return control to the user (or resume your mission if in Sisyphus mode).
